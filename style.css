@@ -1,12 +1,30 @@
 body {
     margin: 0;
     padding: 0;
-    background-color: black;
+    
+    background-color: #000; 
+    background-image: radial-gradient(
+        circle at 50% 50%,  
+        #4a2a8a 0%,        
+        #1a052e 30%,       
+        #000000 55%        
+    );
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    height: 100vh; 
+    width: 100vw;  
+    overflow: hidden;
+    
     text-align: center;
+    color: white;
+    font-family: "Gowun Dodum", "sans-serif", monospace;
 }
 
 #wrapper {
-    display: inline-block;
+    display: none;
     margin: 20px;
 }
 
@@ -14,10 +32,24 @@ body {
     display: inline-block;
     vertical-align: top;
     margin: 0 20 20 20;
-    padding: 20;
-    border: solid 1px white;
+    padding: 20px;
     width: 286px;
-    height: 572.325px;
+    height: 617px;
+
+    background-color: #1a052e;  
+    border: 2px solid #5d3a9b; 
+    border-radius: 10px;          
+    box-shadow: 0 0 15px #a06fff;
+
+    box-sizing: border-box; 
+}
+
+#left-div hr {
+    border: none;
+    height: 2px;
+    background-color: #5d3a9b;
+    box-shadow: 0 0 5px #8a4fff; 
+    margin: 15px 0;
 }
 
 #logo {
@@ -43,7 +75,114 @@ body {
     color: white;
     font-size: 23px;
     font-weight: bold;
-    font-family: "Lucida Console", "Courier New", monospace;
+    font-family: "Gowun Dodum", "sans-serif", monospace;
     text-align: left;
     margin: 15 0;
+}
+
+#menu-container {
+    display: flex; 
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+#logo-menu {
+    width: 250px; 
+    margin-bottom: 30px;
+}
+
+#menu-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 250px;
+}
+
+#menu-options label {
+    font-size: 18px;
+    text-align: left;
+    margin-bottom: -5px;
+}
+
+#menu-options input[type="text"] {
+    padding: 12px;
+    font-size: 16px;
+    background-color: #1a052e; 
+    border: 2px solid #5d3a9b; 
+    border-radius: 10px; 
+    color: white;
+    font-family: inherit;
+    transition: border-color 0.3s, box-shadow 0.3s; 
+}
+
+#menu-options input[type="text"]:focus {
+    outline: none; 
+    border-color: #7b4fde; 
+    box-shadow: 0 0 10px #8a4fff;
+}
+
+#menu-options button,
+#game-over-modal button {
+    padding: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    font-family: inherit;
+    background-color: #1a052e;
+    color: white;
+    border: 2px solid #5d3a9b;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 0 5px #8a4fff;
+    transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+
+#menu-options button:hover,
+#game-over-modal button:hover {
+    background-color: #2a084d;
+    border-color: #7b4fde;
+    box-shadow: 0 0 15px #a06fff, 0 0 5px #a06fff inset;
+}
+
+
+#game-over-modal {
+    --block-size: 28px;
+    --field-width-blocks: 10;
+    --field-height-blocks: 20;
+    
+    --canvas-width: calc(var(--field-width-blocks) * var(--block-size));
+    --canvas-height: calc(var(--field-height-blocks) * var(--block-size));
+    
+    --canvas-center-x: calc(var(--block-size) + (var(--canvas-width) / 2));
+    --canvas-center-y: calc(var(--block-size) + (var(--canvas-height) / 2));
+
+    display: none; 
+    position: absolute;
+    top: var(--canvas-center-y);
+    left: var(--canvas-center-x);
+    transform: translate(-50%, -50%);
+    z-index: 100;
+
+    background-color: #1a052e;
+    border: 2px solid #5d3a9b;
+    border-radius: 10px;
+    box-shadow: 0 0 15px #a06fff, 0 0 5px #a06fff inset;
+    
+    padding: 25px;
+    text-align: center;
+}
+
+
+#game-over-modal h2 {
+    font-size: 26px;
+    font-weight: bold;
+    font-family: "Gowun Dodum", "sans-serif", monospace;
+    color: white;
+    margin: 0 60 20px ; 
+}
+
+#game-over-modal .modal-button-container {
+    display: flex; 
+    justify-content: center; 
+    gap: 15px; 
 }

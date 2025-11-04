@@ -1,7 +1,9 @@
 <html>
 
 <head>
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/x-icon" href="resources/logo.ico">
 
@@ -9,23 +11,45 @@
 
 <body>
 
+    <div id="menu-container">
+        <img src="resources/logo.png" id="logo-menu">
+        <div id="menu-options">
+            <input type="text" id="player-name" placeholder="Escribe tu nombre">
+
+            <button id="start-button">Iniciar Partida</button>
+            
+            <button id="players-button">Jugadores: 1</button> 
+        </div>
+    </div>
+
     <div id="wrapper">
         <div id="left-div">
             <img src="resources/logo.png" id="logo">
             <hr>
 
         <div id="score-div">
-            <label style="font-family: 'Author', sans-serif;"> Score: </label>
+            <label style="font-family: 'Gowun Dodum', sans-serif;"> Puntaje: </label>
             <label id="score"></label>
         </div>
             <div id="lines-div">
-                <label style="font-family: 'Author', sans-serif;"> Lines: </label>
+                <label style="font-family: 'Gowun Dodum', sans-serif;"> Lineas: </label>
                 <label id="lines"></label>
             </div>
         </div>
+    
         <div id="game-container">
             <img src="resources/background.png" id="background">
             <canvas id="game-canvas"></canvas>
+            
+            <div id="game-over-modal">
+                <h2>Perdiste</h2>
+                <div class="modal-button-container">
+                    <label style="font-family: 'Gowun Dodum', sans-serif;">  
+                        <button id="restart-button">Reiniciar</button>
+                        <button id="menu-button">Menú</button>
+                    </label>
+                </div>
+            </div>
         </div>
     </div>
 </body>

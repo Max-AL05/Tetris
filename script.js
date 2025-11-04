@@ -1,10 +1,20 @@
 window.onload = () => {
+
+    const menuContainer = document.getElementById("menu-container");
+    const startButton = document.getElementById("start-button");
+    const wrapper = document.getElementById("wrapper");
+
     const
         background = document.getElementById("background"),
         scoreLbl = document.getElementById("score"),
         linesLbl = document.getElementById("lines"),
         canvas = document.getElementById("game-canvas"),
-        ctx = canvas.getContext("2d");
+        ctx = canvas.getContext("2d"),
+        gameOverModal = document.getElementById("game-over-modal");
+
+    const restartButton = document.getElementById("restart-button");
+    const menuButton = document.getElementById("menu-button");
+
 
     class Tetromino {
         static COLORS = ["blue", "green", "yellow", "red", "orange", "light-blue", "purple"];
@@ -43,7 +53,6 @@ window.onload = () => {
                 this.img.onload = () => this.draw();
                 return;
             }
-            // Print the current tetromine
             for (let i = 0; i < this.length; ++i) {
                 ctx.drawImage(
                     this.img,
@@ -109,33 +118,47 @@ window.onload = () => {
     let tetromino = null,
         delay,
         score,
-        lines;
+        lines,
+        isGameOver = false;
 
 
+    startButton.onclick = () => {
+        menuContainer.style.display = "none";
+        wrapper.style.display = "inline-block";
+        setup();
+    };
+    
+    restartButton.onclick = () => {
+        reset(); 
+        draw();  
+    };
 
-    (function setup() {
+    menuButton.onclick = () => {
+        reset();
+        wrapper.style.display = "none"; 
+        menuContainer.style.display = "flex"; 
+    };
 
+
+    function setup() {
         canvas.style.top = Tetromino.BLOCK_SIZE;
         canvas.style.left = Tetromino.BLOCK_SIZE;
 
         ctx.canvas.width = FIELD_WIDTH * Tetromino.BLOCK_SIZE;
         ctx.canvas.height = FIELD_HEIGHT * Tetromino.BLOCK_SIZE;
 
-        // Scale background
         const scale = Tetromino.BLOCK_SIZE / 13.83333333333;
         background.style.width = scale * 166;
         background.style.height = scale * 304;
 
-        // Offset each block to the middle of the table width
         const middle = Math.floor(FIELD_WIDTH / 2);
         for (const t of TETROMINOES) t.x = t.x.map(x => x + middle);
 
         reset();
-        draw();
-    })();
+        draw(); 
+    }
 
     function reset() {
-        // Make false all blocks
         FIELD.forEach((_, y) => FIELD[y] = Array.from({ length: FIELD_WIDTH }).map(_ => false));
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -143,18 +166,18 @@ window.onload = () => {
         delay = Tetromino.DELAY;
         score = 0;
         lines = 0;
+
+        gameOverModal.style.display = "none";
+        isGameOver = false;
     }
 
     function draw() {
         if (tetromino) {
 
-            // Collision?
             if (tetromino.collides(i => ({ x: tetromino.x[i], y: tetromino.y[i] + 1 }))) {
                 tetromino.merge();
-                // Prepare for new tetromino
                 tetromino = null;
 
-                // Check for completed rows
                 let completedRows = 0;
                 for (let y = FIELD_HEIGHT - 1; y >= MIN_VALID_ROW; --y)
                     if (FIELD[y].every(e => e !== false)) {
@@ -162,12 +185,10 @@ window.onload = () => {
                             FIELD[ay] = [...FIELD[ay - 1]];
 
                         ++completedRows;
-                        // Keep the same row
                         ++y;
                     }
 
                 if (completedRows) {
-                    // Print againt the table
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     for (let y = MIN_VALID_ROW; y < FIELD_HEIGHT; ++y) {
                         for (let x = 0; x < FIELD_WIDTH; ++x) {
@@ -178,24 +199,19 @@ window.onload = () => {
                     score += [40, 100, 300, 1200][completedRows - 1];
                     lines += completedRows;
                 } else {
-                    // Check if player has lost
                     if (FIELD[MIN_VALID_ROW - 1].some(block => block !== false)) {
-                        alert("You have lost!");
-                        reset();
+                        gameOverModal.style.display = "block"; 
+                        isGameOver = true; 
                     }
                 }
-
 
             } else
                 tetromino.update(i => ++tetromino.y[i]);
         }
-        // No tetromino failing
         else {
-
             scoreLbl.innerText = score;
             linesLbl.innerText = lines;
 
-            // Create random tetromino
             tetromino = (({ x, y }, color) =>
                 new Tetromino([...x], [...y], color)
             )(
@@ -206,11 +222,19 @@ window.onload = () => {
             tetromino.draw();
         }
 
-        setTimeout(draw, delay);
+        if (!isGameOver) {
+            setTimeout(draw, delay);
+        }
     }
 
-    // Move
     window.onkeydown = event => {
+        
+        if (isGameOver) {
+            return; 
+        }
+        
+        if (wrapper.style.display === "none") return;
+        
         switch (event.key) {
             case "ArrowLeft":
                 if (!tetromino.collides(i => ({ x: tetromino.x[i] - 1, y: tetromino.y[i] })))
@@ -229,6 +253,9 @@ window.onload = () => {
         }
     }
     window.onkeyup = event => {
+        if (isGameOver) return;
+        if (wrapper.style.display === "none") return;
+
         if (event.key === "ArrowDown")
             delay = Tetromino.DELAY;
     }
