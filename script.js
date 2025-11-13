@@ -2,8 +2,11 @@ window.onload = () => {
 
     const menuContainer = document.getElementById("menu-container");
     const startButton = document.getElementById("start-button");
+    const playersButton = document.getElementById("players-button");
     const wrapper = document.getElementById("wrapper");
 
+    const gameArea = document.getElementById("game-area");
+    
     const
         background = document.getElementById("background"),
         scoreLbl = document.getElementById("score"),
@@ -11,15 +14,19 @@ window.onload = () => {
         canvas = document.getElementById("game-canvas"),
         ctx = canvas.getContext("2d"),
         gameOverModal = document.getElementById("game-over-modal");
-
+    
     const restartButton = document.getElementById("restart-button");
     const menuButton = document.getElementById("menu-button");
 
+    const quizContainer = document.getElementById("quiz-container");
+    const questionText = document.getElementById("question-text");
+    const answerOptions = document.getElementById("answer-options");
+    const quizFeedback = document.getElementById("quiz-feedback"); 
 
     class Tetromino {
         static COLORS = ["blue", "green", "yellow", "red", "orange", "light-blue", "purple"];
         static BLOCK_SIZE = 28;
-        static DELAY = 400;
+        static DELAY = 400; 
         static DELAY_INCREASED = 5;
 
         constructor(xs, ys, color = null) {
@@ -119,26 +126,64 @@ window.onload = () => {
         delay,
         score,
         lines,
-        isGameOver = false;
+        isGameOver = false,
+        numPlayers = 1, 
+        currentBaseDelay;
 
+    const questions = [
+        {
+            q: "¿Qué lenguaje se usa para estilizar una página web?",
+            options: ["JavaScript", "CSS", "HTML", "Python"],
+            correct: 1
+        },
+        {
+            q: "¿Qué significa 'DOM'?",
+            options: ["Document Object Model", "Data Object Model", "Direct Output Mainframe", "Digital Order Module"],
+            correct: 0
+        },
+        {
+            q: "La etiqueta <p> se usa para...",
+            options: ["Imágenes", "Enlaces", "Párrafos", "Listas"],
+            correct: 2
+        },
+        {
+            q: "¿Cuál NO es un tipo de dato primitivo en JS?",
+            options: ["String", "Number", "Boolean", "Object"],
+            correct: 3
+        }
+    ];
+    let currentQuestionIndex = 0;
+
+    playersButton.onclick = () => {
+        numPlayers = (numPlayers === 1) ? 2 : 1;
+        playersButton.innerText = `Jugadores: ${numPlayers}`;
+    };
 
     startButton.onclick = () => {
         menuContainer.style.display = "none";
-        wrapper.style.display = "inline-block";
-        setup();
+        gameArea.style.display = "flex"; 
+        
+        if (numPlayers === 1) {
+            quizContainer.style.display = "none"; 
+        } else {
+            quizContainer.style.display = "block"; 
+            startQuiz(); 
+        }
+        
+        setup(); 
     };
-    
+
     restartButton.onclick = () => {
         reset(); 
-        draw();  
+        if (numPlayers === 2) startQuiz(); 
+        draw();
     };
 
     menuButton.onclick = () => {
-        reset();
-        wrapper.style.display = "none"; 
-        menuContainer.style.display = "flex"; 
+        reset(); 
+        gameArea.style.display = "none";
+        menuContainer.style.display = "flex";
     };
-
 
     function setup() {
         canvas.style.top = Tetromino.BLOCK_SIZE;
@@ -155,25 +200,28 @@ window.onload = () => {
         for (const t of TETROMINOES) t.x = t.x.map(x => x + middle);
 
         reset();
-        draw(); 
+        draw();
     }
 
     function reset() {
         FIELD.forEach((_, y) => FIELD[y] = Array.from({ length: FIELD_WIDTH }).map(_ => false));
-
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        delay = Tetromino.DELAY;
+        currentBaseDelay = Tetromino.DELAY; 
+        delay = currentBaseDelay;
         score = 0;
         lines = 0;
 
         gameOverModal.style.display = "none";
         isGameOver = false;
+
+        if (gameArea.style.display === "none") {
+            quizContainer.style.display = "none";
+        }
     }
 
     function draw() {
         if (tetromino) {
-
             if (tetromino.collides(i => ({ x: tetromino.x[i], y: tetromino.y[i] + 1 }))) {
                 tetromino.merge();
                 tetromino = null;
@@ -183,7 +231,6 @@ window.onload = () => {
                     if (FIELD[y].every(e => e !== false)) {
                         for (let ay = y; ay >= MIN_VALID_ROW; --ay)
                             FIELD[ay] = [...FIELD[ay - 1]];
-
                         ++completedRows;
                         ++y;
                     }
@@ -195,45 +242,100 @@ window.onload = () => {
                             if (FIELD[y][x] !== false) new Tetromino([x], [y], FIELD[y][x]).draw();
                         }
                     }
-
                     score += [40, 100, 300, 1200][completedRows - 1];
                     lines += completedRows;
                 } else {
                     if (FIELD[MIN_VALID_ROW - 1].some(block => block !== false)) {
-                        gameOverModal.style.display = "block"; 
-                        isGameOver = true; 
+                        gameOverModal.style.display = "block";
+                        isGameOver = true;
                     }
                 }
-
             } else
                 tetromino.update(i => ++tetromino.y[i]);
         }
         else {
             scoreLbl.innerText = score;
             linesLbl.innerText = lines;
-
             tetromino = (({ x, y }, color) =>
                 new Tetromino([...x], [...y], color)
             )(
                 TETROMINOES[Math.floor(Math.random() * (TETROMINOES.length - 1))],
                 Math.floor(Math.random() * (Tetromino.COLORS.length - 1))
             );
-
             tetromino.draw();
         }
 
         if (!isGameOver) {
+            if (delay !== (currentBaseDelay / Tetromino.DELAY_INCREASED)) {
+                delay = currentBaseDelay;
+            }
             setTimeout(draw, delay);
+        }
+    }
+    
+    function startQuiz() {
+        currentQuestionIndex = 0;
+        showNextQuestion();
+    }
+
+    function showNextQuestion() {
+        answerOptions.innerHTML = "";
+
+        if (currentQuestionIndex >= questions.length) {
+            currentQuestionIndex = 0; 
+        }
+
+        const q = questions[currentQuestionIndex];
+        questionText.innerText = q.q;
+
+        q.options.forEach((option, index) => {
+            const button = document.createElement("button");
+            button.innerText = option;
+            button.onclick = () => checkAnswer(index, q.correct);
+            answerOptions.appendChild(button);
+        });
+    }
+
+function checkAnswer(selectedIndex, correctIndex) {
+    
+    const buttons = answerOptions.querySelectorAll('button');
+    buttons.forEach(button => button.disabled = true);
+
+    const isCorrect = (selectedIndex === correctIndex);
+
+    if (isCorrect) {
+        quizFeedback.innerText = "¡Correcto!";
+        quizFeedback.className = 'correct show'; 
+    } else {
+        quizFeedback.innerText = "¡Incorrecto!";
+        quizFeedback.className = 'incorrect show';
+        
+        speedUpTetris();
+    }
+    
+    setTimeout(() => {
+        
+        quizFeedback.className = ''; 
+        
+        currentQuestionIndex++;
+        showNextQuestion();
+
+    }, 1000);
+}
+
+    function speedUpTetris() {
+        currentBaseDelay = Math.max(50, currentBaseDelay - 50); 
+    
+        if (delay !== (currentBaseDelay / Tetromino.DELAY_INCREASED)) {
+             delay = currentBaseDelay;
         }
     }
 
     window.onkeydown = event => {
-        
         if (isGameOver) {
             return; 
         }
-        
-        if (wrapper.style.display === "none") return;
+        if (gameArea.style.display === "none") return;
         
         switch (event.key) {
             case "ArrowLeft":
@@ -245,7 +347,7 @@ window.onload = () => {
                     tetromino.update(i => ++tetromino.x[i]);
                 break;
             case "ArrowDown":
-                delay = Tetromino.DELAY / Tetromino.DELAY_INCREASED;
+                delay = currentBaseDelay / Tetromino.DELAY_INCREASED;
                 break;
             case " ":
                 tetromino.rotate();
@@ -254,10 +356,8 @@ window.onload = () => {
     }
     window.onkeyup = event => {
         if (isGameOver) return;
-        if (wrapper.style.display === "none") return;
-
+        if (gameArea.style.display === "none") return; 
         if (event.key === "ArrowDown")
-            delay = Tetromino.DELAY;
+            delay = currentBaseDelay;
     }
-
 }
