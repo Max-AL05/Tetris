@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tetris - Controles</title>
+    
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="resources/logo.ico">
+</head>
+<body>
+
+    <div id="controls-container">
+        <h2>Controles del Juego</h2>
+
+        <div id="controls-guide">
+            <h3>Menús (General)</h3>
+            <p>
+                <span class="action">Mover selección</span>
+                <span class="key">W / S</span>
+            </p>
+            <p>
+                <span class="action">Mover selección (Game Over)</span>
+                <span class="key">A / D</span>
+            </p>
+            <p>
+                <span class="action">Confirmar / Seleccionar</span>
+                <span class="key">Espacio</span>
+            </p>
+
+            <h3>Jugador 1 (Tetris)</h3>
+            <p>
+                <span class="action">Mover pieza</span>
+                <span class="key">Flechas (Izq / Der)</span>
+            </p>
+            <p>
+                <span class="action">Acelerar caída</span>
+                <span class="key">Flecha (Abajo)</span>
+            </p>
+            <p>
+                <span class="action">Rotar pieza</span>
+                <span class="key">Espacio</span>
+            </p>
+            
+            <h3>Jugador 2 (Quiz)</h3>
+            <p>
+                <span class="action">Mover selección</span>
+                <span class="key">W / S</span>
+            </p>
+            <p>
+                <span class="action">Confirmar respuesta</span>
+                <span class="key">Q</span>
+            </p>
+        </div>
+        
+        <div class="controls-footer">
+            <button id="back-button" class="btn-stars2">
+                Volver
+                </button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('back-button').onclick = () => {
+            window.location.href = 'index.html';
+        };
+    </script>
+</body>
+</html>

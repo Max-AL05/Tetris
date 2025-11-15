@@ -319,7 +319,24 @@ body {
     background: #1a052e;
     font-size: 18px;
     font-weight: bold;
-    font-family: 'Roboto', sans-serif; 
+    font-family: 'Zain', sans-serif; 
+    color: #ffffff; 
+    border: 2px solid #5d3a9b; 
+    border-radius: 10px;
+    box-shadow: 0 0 5px #a06fff;
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    width: 220px;
+    text-align: center;
+    box-sizing: border-box;
+}
+.btn-stars2{
+    position: center;
+    padding: 5px 140px ;
+    background: #1a052e;
+    font-size: 18px;
+    font-weight: bold;
+    font-family: 'Zain', sans-serif; 
     color: #ffffff; 
     border: 2px solid #5d3a9b; 
     border-radius: 10px;
@@ -486,4 +503,64 @@ body {
 
 .animate-pop {
     animation: button-pop 0.3s ease-out;
+}
+
+/* --- ESTILOS PÁGINA DE CONTROLES --- */
+
+#controls-container {
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    height: 720 px;
+    background-color: #1a052e;
+    border: 2px solid #5d3a9b;
+    border-radius: 10px;
+    box-shadow: 0 0 15px #a06fff;
+    box-sizing: border-box;
+    padding: 25px;
+    text-align: left;
+}
+
+#controls-container h2 {
+    font-size: 28px;
+    font-weight: bold;
+    color: white;
+    margin: 0 0 20px 0;
+    text-align: center;
+}
+
+#controls-guide h3 {
+    font-size: 20px;
+    color: #a06fff;
+    border-bottom: 2px solid #5d3a9b;
+    padding-bottom: 5px;
+    margin: 20px 0 10px 0;
+    text-align: center;
+}
+
+#controls-guide p {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+    line-height: 1.5;
+    margin: 0;
+    padding: 12px 10px;
+    border-bottom: 1px solid #5d3a9b; 
+}
+
+.controls-footer {
+    text-align: center;
+    margin-top: 20px;
+}
+#controls-guide p .action {
+    color: white;
+    font-weight: 700; 
+}
+
+#controls-guide p .key {
+    color: #a06fff;
+    font-weight: 700;
+    text-align: right;
+    min-width: 100px;
 }

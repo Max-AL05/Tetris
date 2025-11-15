@@ -2,7 +2,8 @@ window.onload = () => {
 
     const menuContainer = document.getElementById("menu-container");
     const startButton = document.getElementById("start-button");
-    const playersButton = document.getElementById("players-button"); 
+    const playersButton = document.getElementById("players-button");
+    const controlsButton = document.getElementById("controls-button");
 
     const gameArea = document.getElementById("game-area"); 
     
@@ -137,8 +138,7 @@ window.onload = () => {
         quizSelectedAnswerIndex = 0;
         
     let menuSelectionIndex = 0;
-    const menuItems = [startButton, playersButton]; 
-    let gameOverSelectionIndex = 0; 
+    const menuItems = [startButton, playersButton, controlsButton]; 
     const gameOverItems = [restartButton, menuButton];
 
 
@@ -206,6 +206,9 @@ window.onload = () => {
         menuContainer.style.display = "flex";
         menuSelectionIndex = 0;
         updateMenuSelection();
+    };
+    controlsButton.onclick = () => {
+        window.location.href = 'controles.html';
     };
 
     function setup() {
