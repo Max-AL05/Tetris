@@ -2,18 +2,19 @@ window.onload = () => {
 
     const menuContainer = document.getElementById("menu-container");
     const startButton = document.getElementById("start-button");
-    const playersButton = document.getElementById("players-button");
-    const wrapper = document.getElementById("wrapper");
+    const playersButton = document.getElementById("players-button"); 
 
-    const gameArea = document.getElementById("game-area");
+    const gameArea = document.getElementById("game-area"); 
     
     const
-        background = document.getElementById("background"),
         scoreLbl = document.getElementById("score"),
         linesLbl = document.getElementById("lines"),
         canvas = document.getElementById("game-canvas"),
         ctx = canvas.getContext("2d"),
         gameOverModal = document.getElementById("game-over-modal");
+    
+    const nextCanvas = document.getElementById("next-piece-canvas");
+    const nextCtx = nextCanvas.getContext("2d");
     
     const restartButton = document.getElementById("restart-button");
     const menuButton = document.getElementById("menu-button");
@@ -21,12 +22,13 @@ window.onload = () => {
     const quizContainer = document.getElementById("quiz-container");
     const questionText = document.getElementById("question-text");
     const answerOptions = document.getElementById("answer-options");
-    const quizFeedback = document.getElementById("quiz-feedback"); 
+    const quizFeedback = document.getElementById("quiz-feedback");
+    
 
     class Tetromino {
-        static COLORS = ["blue", "green", "yellow", "red", "orange", "light-blue", "purple"];
+        static COLORS = ["blue", "green", "yellow", "red", "orange", "purple"];
         static BLOCK_SIZE = 28;
-        static DELAY = 400; 
+        static DELAY = 400;
         static DELAY_INCREASED = 5;
 
         constructor(xs, ys, color = null) {
@@ -55,16 +57,16 @@ window.onload = () => {
             this.draw();
         }
 
-        draw() {
+        draw(targetCtx = ctx, offsetX = 0, offsetY = 0) {
             if (!this.img.complete) {
-                this.img.onload = () => this.draw();
+                this.img.onload = () => this.draw(targetCtx, offsetX, offsetY);
                 return;
             }
             for (let i = 0; i < this.length; ++i) {
-                ctx.drawImage(
+                targetCtx.drawImage(
                     this.img,
-                    this.x[i] * Tetromino.BLOCK_SIZE,
-                    this.y[i] * Tetromino.BLOCK_SIZE,
+                    (this.x[i] + offsetX) * Tetromino.BLOCK_SIZE,
+                    (this.y[i] + offsetY) * Tetromino.BLOCK_SIZE,
                     Tetromino.BLOCK_SIZE,
                     Tetromino.BLOCK_SIZE
                 );
@@ -112,24 +114,36 @@ window.onload = () => {
         FIELD_HEIGHT = 20,
         FIELD = Array.from({ length: FIELD_HEIGHT }),
         MIN_VALID_ROW = 4,
+        NEXT_CANVAS_WIDTH = 4,
+        NEXT_CANVAS_HEIGHT = 4,
+        
         TETROMINOES = [
-            new Tetromino([0, 0, 0, 0], [0, 1, 2, 3]),
-            new Tetromino([0, 0, 1, 1], [0, 1, 0, 1]),
-            new Tetromino([0, 1, 1, 1], [0, 0, 1, 2]),
-            new Tetromino([0, 0, 0, 1], [0, 1, 2, 0]),
-            new Tetromino([0, 1, 1, 2], [0, 0, 1, 1]),
-            new Tetromino([0, 1, 1, 2], [1, 1, 0, 1]),
-            new Tetromino([0, 1, 1, 2], [1, 1, 0, 0])
+            new Tetromino([0, 0, 1, 1], [0, 1, 0, 1]), // O
+            new Tetromino([0, 1, 1, 1], [0, 0, 1, 2]), // L
+            new Tetromino([0, 0, 0, 1], [0, 1, 2, 0]), // J
+            new Tetromino([0, 1, 1, 2], [0, 0, 1, 1]), // S
+            new Tetromino([0, 1, 1, 2], [1, 1, 0, 1]), // T
+            new Tetromino([0, 1, 1, 2], [1, 1, 0, 0])  // Z
         ];
 
+    // --- VARIABLES DE ESTADO DEL JUEGO --- //
     let tetromino = null,
+        nextTetromino = null,
         delay,
         score,
         lines,
         isGameOver = false,
-        numPlayers = 1, 
-        currentBaseDelay;
+        numPlayers = 1,
+        currentBaseDelay,
+        quizSelectedAnswerIndex = 0;
+        
+    let menuSelectionIndex = 0;
+    const menuItems = [startButton, playersButton]; 
+    let gameOverSelectionIndex = 0; 
+    const gameOverItems = [restartButton, menuButton];
 
+
+    // --- BANCO DE PREGUNTAS (P2) --- //
     const questions = [
         {
             q: "¿Qué lenguaje se usa para estilizar una página web?",
@@ -153,6 +167,9 @@ window.onload = () => {
         }
     ];
     let currentQuestionIndex = 0;
+
+
+    // --- LÓGICA DEL MENÚ --- //
 
     playersButton.onclick = () => {
         numPlayers = (numPlayers === 1) ? 2 : 1;
@@ -181,23 +198,22 @@ window.onload = () => {
 
     menuButton.onclick = () => {
         reset(); 
-        gameArea.style.display = "none";
+        gameArea.style.display = "none"; 
         menuContainer.style.display = "flex";
+        menuSelectionIndex = 0;
+        updateMenuSelection();
     };
 
-    function setup() {
-        canvas.style.top = Tetromino.BLOCK_SIZE;
-        canvas.style.left = Tetromino.BLOCK_SIZE;
+    // --- LÓGICA DEL JUEGO DE TETRIS (P1) --- //
 
+    function setup() {
+        canvas.style.top = "14px";
+        canvas.style.left = "10px";
         ctx.canvas.width = FIELD_WIDTH * Tetromino.BLOCK_SIZE;
         ctx.canvas.height = FIELD_HEIGHT * Tetromino.BLOCK_SIZE;
 
-        const scale = Tetromino.BLOCK_SIZE / 13.83333333333;
-        background.style.width = scale * 166;
-        background.style.height = scale * 304;
-
-        const middle = Math.floor(FIELD_WIDTH / 2);
-        for (const t of TETROMINOES) t.x = t.x.map(x => x + middle);
+        nextCanvas.width = NEXT_CANVAS_WIDTH * Tetromino.BLOCK_SIZE;
+        nextCanvas.height = NEXT_CANVAS_HEIGHT * Tetromino.BLOCK_SIZE;
 
         reset();
         draw();
@@ -207,6 +223,8 @@ window.onload = () => {
         FIELD.forEach((_, y) => FIELD[y] = Array.from({ length: FIELD_WIDTH }).map(_ => false));
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+        nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
+        
         currentBaseDelay = Tetromino.DELAY; 
         delay = currentBaseDelay;
         score = 0;
@@ -214,6 +232,9 @@ window.onload = () => {
 
         gameOverModal.style.display = "none";
         isGameOver = false;
+
+        nextTetromino = generateNewTetromino();
+        tetromino = null;
 
         if (gameArea.style.display === "none") {
             quizContainer.style.display = "none";
@@ -248,6 +269,8 @@ window.onload = () => {
                     if (FIELD[MIN_VALID_ROW - 1].some(block => block !== false)) {
                         gameOverModal.style.display = "block";
                         isGameOver = true;
+                        gameOverSelectionIndex = 0;
+                        updateGameOverSelection();
                     }
                 }
             } else
@@ -256,13 +279,8 @@ window.onload = () => {
         else {
             scoreLbl.innerText = score;
             linesLbl.innerText = lines;
-            tetromino = (({ x, y }, color) =>
-                new Tetromino([...x], [...y], color)
-            )(
-                TETROMINOES[Math.floor(Math.random() * (TETROMINOES.length - 1))],
-                Math.floor(Math.random() * (Tetromino.COLORS.length - 1))
-            );
-            tetromino.draw();
+            
+            spawnNewTetromino();
         }
 
         if (!isGameOver) {
@@ -272,7 +290,44 @@ window.onload = () => {
             setTimeout(draw, delay);
         }
     }
-    
+
+    function generateNewTetromino() {
+        const randIndex = Math.floor(Math.random() * TETROMINOES.length);
+        const randColor = Math.floor(Math.random() * Tetromino.COLORS.length);
+        const piece = TETROMINOES[randIndex];
+        return new Tetromino([...piece.x], [...piece.y], randColor);
+    }
+
+    function spawnNewTetromino() {
+        tetromino = nextTetromino; 
+        nextTetromino = generateNewTetromino(); 
+
+        const middle = Math.floor(FIELD_WIDTH / 2);
+        tetromino.x = tetromino.x.map(x => x + middle);
+
+        tetromino.draw(ctx, 0, 0);
+        
+        drawNextPiece(); 
+    }
+
+    function drawNextPiece() {
+        nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
+        if (!nextTetromino) return;
+
+        const minX = Math.min(...nextTetromino.x);
+        const maxX = Math.max(...nextTetromino.x);
+        const minY = Math.min(...nextTetromino.y);
+        const maxY = Math.max(...nextTetromino.y);
+
+        const pieceWidth = maxX - minX + 1;
+        const pieceHeight = maxY - minY + 1;
+
+        const offsetX = (NEXT_CANVAS_WIDTH - pieceWidth) / 2 - minX;
+        const offsetY = (NEXT_CANVAS_HEIGHT - pieceHeight) / 2 - minY;
+
+        nextTetromino.draw(nextCtx, offsetX, offsetY);
+    }
+
     function startQuiz() {
         currentQuestionIndex = 0;
         showNextQuestion();
@@ -280,6 +335,7 @@ window.onload = () => {
 
     function showNextQuestion() {
         answerOptions.innerHTML = "";
+        quizSelectedAnswerIndex = 0; 
 
         if (currentQuestionIndex >= questions.length) {
             currentQuestionIndex = 0; 
@@ -291,73 +347,189 @@ window.onload = () => {
         q.options.forEach((option, index) => {
             const button = document.createElement("button");
             button.innerText = option;
-            button.onclick = () => checkAnswer(index, q.correct);
+            button.style.pointerEvents = "none"; 
+            
+            if (index === quizSelectedAnswerIndex) {
+                button.classList.add('selected');
+            }
+            
             answerOptions.appendChild(button);
         });
     }
-
-function checkAnswer(selectedIndex, correctIndex) {
     
-    const buttons = answerOptions.querySelectorAll('button');
-    buttons.forEach(button => button.disabled = true);
-
-    const isCorrect = (selectedIndex === correctIndex);
-
-    if (isCorrect) {
-        quizFeedback.innerText = "¡Correcto!";
-        quizFeedback.className = 'correct show'; 
-    } else {
-        quizFeedback.innerText = "¡Incorrecto!";
-        quizFeedback.className = 'incorrect show';
-        
-        speedUpTetris();
+    function updateQuizSelection() {
+        const buttons = answerOptions.querySelectorAll('button');
+        buttons.forEach((button, index) => {
+            if (index === quizSelectedAnswerIndex) {
+                button.classList.add('selected');
+            } else {
+                button.classList.remove('selected');
+            }
+        });
     }
-    
-    setTimeout(() => {
-        
-        quizFeedback.className = ''; 
-        
-        currentQuestionIndex++;
-        showNextQuestion();
 
-    }, 1000);
-}
+    function checkAnswer(selectedIndex, correctIndex) {
+        
+        if (quizFeedback.className.includes('show')) {
+            return;
+        }
+
+        const buttons = answerOptions.querySelectorAll('button');
+        buttons.forEach(button => button.disabled = true);
+
+        const isCorrect = (selectedIndex === correctIndex);
+
+        if (isCorrect) {
+            quizFeedback.innerText = "¡Correcto!";
+            quizFeedback.className = 'correct show'; 
+        } else {
+            quizFeedback.innerText = "¡Incorrecto!";
+            quizFeedback.className = 'incorrect show'; 
+            speedUpTetris();
+        }
+        
+        setTimeout(() => {
+            quizFeedback.className = ''; 
+            currentQuestionIndex++;
+            showNextQuestion();
+        }, 1000); 
+    }
 
     function speedUpTetris() {
         currentBaseDelay = Math.max(50, currentBaseDelay - 50); 
-    
         if (delay !== (currentBaseDelay / Tetromino.DELAY_INCREASED)) {
              delay = currentBaseDelay;
         }
     }
 
+    function updateMenuSelection() {
+        menuItems.forEach((item, index) => {
+            if (index === menuSelectionIndex) {
+                item.classList.add('selected');
+            } else {
+                item.classList.remove('selected');
+            }
+        });
+    }
+    
+    function updateGameOverSelection() {
+        gameOverItems.forEach((button, index) => {
+            if (index === gameOverSelectionIndex) {
+                button.classList.add('selected');
+            } else {
+                button.classList.remove('selected');
+            }
+        });
+    }
+
     window.onkeydown = event => {
-        if (isGameOver) {
-            return; 
-        }
-        if (gameArea.style.display === "none") return;
+        let handled = false; 
         
-        switch (event.key) {
-            case "ArrowLeft":
-                if (!tetromino.collides(i => ({ x: tetromino.x[i] - 1, y: tetromino.y[i] })))
-                    tetromino.update(i => --tetromino.x[i]);
-                break;
-            case "ArrowRight":
-                if (!tetromino.collides(i => ({ x: tetromino.x[i] + 1, y: tetromino.y[i] })))
-                    tetromino.update(i => ++tetromino.x[i]);
-                break;
-            case "ArrowDown":
-                delay = currentBaseDelay / Tetromino.DELAY_INCREASED;
-                break;
-            case " ":
-                tetromino.rotate();
-                break;
+        if (menuContainer.style.display === "flex") {
+            switch (event.key) {
+                case "ArrowUp": 
+                    menuSelectionIndex--;
+                    if (menuSelectionIndex < 0) menuSelectionIndex = menuItems.length - 1;
+                    updateMenuSelection();
+                    handled = true;
+                    break;
+                case "ArrowDown": 
+                    menuSelectionIndex++;
+                    if (menuSelectionIndex >= menuItems.length) menuSelectionIndex = 0;
+                    updateMenuSelection();
+                    handled = true;
+                    break;
+                case " ":
+                    menuItems[menuSelectionIndex].click(); 
+                    handled = true;
+                    break;
+            }
+        }
+        
+        else if (isGameOver) {
+             switch (event.key) {
+                case "ArrowLeft": 
+                    gameOverSelectionIndex--;
+                    if (gameOverSelectionIndex < 0) gameOverSelectionIndex = gameOverItems.length - 1;
+                    updateGameOverSelection();
+                    handled = true;
+                    break;
+                case "ArrowRight": 
+                    gameOverSelectionIndex++;
+                    if (gameOverSelectionIndex >= gameOverItems.length) gameOverSelectionIndex = 0;
+                    updateGameOverSelection();
+                    handled = true;
+                    break;
+                case " ":
+                    gameOverItems[gameOverSelectionIndex].click();
+                    handled = true;
+                    break;
+            }
+        }
+        
+        else if (numPlayers === 2 && !quizFeedback.className.includes('show')) {
+            const quizButtons = answerOptions.querySelectorAll('button');
+            if (quizButtons.length > 0) {
+                 switch (event.key) {
+                    case "w": 
+                    case "W":
+                        quizSelectedAnswerIndex--;
+                        if (quizSelectedAnswerIndex < 0) quizSelectedAnswerIndex = quizButtons.length - 1;
+                        updateQuizSelection();
+                        handled = true;
+                        break;
+                    case "s": 
+                    case "S":
+                        quizSelectedAnswerIndex++;
+                        if (quizSelectedAnswerIndex >= quizButtons.length) quizSelectedAnswerIndex = 0;
+                        updateQuizSelection();
+                        handled = true;
+                        break;
+                    case "q":
+                    case "Q":
+                        const q = questions[currentQuestionIndex];
+                        checkAnswer(quizSelectedAnswerIndex, q.correct);
+                        handled = true;
+                        break;
+                 }
+            }
+        }
+
+        if (!isGameOver && !handled && gameArea.style.display === "flex") {
+            switch (event.key) {
+                case "ArrowLeft":
+                    if (!tetromino.collides(i => ({ x: tetromino.x[i] - 1, y: tetromino.y[i] })))
+                        tetromino.update(i => --tetromino.x[i]);
+                    handled = true;
+                    break;
+                case "ArrowRight":
+                    if (!tetromino.collides(i => ({ x: tetromino.x[i] + 1, y: tetromino.y[i] })))
+                        tetromino.update(i => ++tetromino.x[i]);
+                    handled = true;
+                    break;
+                case "ArrowDown":
+                    delay = currentBaseDelay / Tetromino.DELAY_INCREASED; 
+                    handled = true;
+                    break;
+                case " ": // Espacio
+                    tetromino.rotate();
+                    handled = true;
+                    break;
+            }
+        }
+        
+        if (handled) {
+            event.preventDefault();
         }
     }
+    
     window.onkeyup = event => {
-        if (isGameOver) return;
-        if (gameArea.style.display === "none") return; 
+        if (isGameOver || gameArea.style.display === "none") return;
+
         if (event.key === "ArrowDown")
-            delay = currentBaseDelay;
+            delay = currentBaseDelay; 
     }
+    
+    updateMenuSelection();
+
 }
