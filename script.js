@@ -126,7 +126,6 @@ window.onload = () => {
             new Tetromino([0, 1, 1, 2], [1, 1, 0, 0])  // Z
         ];
 
-    // --- VARIABLES DE ESTADO DEL JUEGO --- //
     let tetromino = null,
         nextTetromino = null,
         delay,
@@ -143,7 +142,6 @@ window.onload = () => {
     const gameOverItems = [restartButton, menuButton];
 
 
-    // --- BANCO DE PREGUNTAS (P2) --- //
     const questions = [
         {
             q: "¿Qué lenguaje se usa para estilizar una página web?",
@@ -170,10 +168,16 @@ window.onload = () => {
 
 
     // --- LÓGICA DEL MENÚ --- //
-
     playersButton.onclick = () => {
+        
+        playersButton.classList.add('animate-pop');
+
         numPlayers = (numPlayers === 1) ? 2 : 1;
         playersButton.innerText = `Jugadores: ${numPlayers}`;
+
+        setTimeout(() => {
+            playersButton.classList.remove('animate-pop');
+        }, 300);
     };
 
     startButton.onclick = () => {
@@ -203,8 +207,6 @@ window.onload = () => {
         menuSelectionIndex = 0;
         updateMenuSelection();
     };
-
-    // --- LÓGICA DEL JUEGO DE TETRIS (P1) --- //
 
     function setup() {
         canvas.style.top = "14px";

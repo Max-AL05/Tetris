@@ -24,10 +24,10 @@ body {
     vertical-align: top;
     margin: 0 20 20 20;
     padding: 20px;
-    width: 286px;
-    height: 617px;
+    width: 310px;
+    height: 616px;
 
-    background-color: rgba(0, 0, 0, 0.6); 
+    background-color: rgba(0, 0, 0, 0.8); 
     border: 2px solid #5d3a9b; 
     border-radius: 10px;          
     box-shadow: 0 0 15px #a06fff;
@@ -105,12 +105,10 @@ body {
     width: 250px;
 }
 
-/* AÑADE ESTOS ESTILOS (Para Game Over y Quiz) */
-
-#game-over-modal button,
 #answer-options button {
     padding: 12px;
-    font-size: 18px;
+    font-size: 16px;
+    text-align: left;
     font-weight: bold;
     font-family: inherit;
     background-color: #1a052e;
@@ -122,11 +120,10 @@ body {
     transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
 }
 
-#game-over-modal button:hover,
 #answer-options button:hover {
-    border-color: #ffffff;
-    box-shadow: 0 0 15px #ffffff, 0 0 5px #ffffff inset;
     background-color: #2a084d;
+    border-color: #7b4fde;
+    box-shadow: 0 0 15px #a06fff, 0 0 5px #a06fff inset;
 }
 
 #game-over-modal {
@@ -286,9 +283,7 @@ body {
     box-shadow: 0 0 15px #ff4e4e, 0 0 5px #ff4e4e inset;
 }
 
-#answer-options button.selected,
-#menu-options button.selected,
-#game-over-modal button.selected {
+#answer-options button.selected {
     border-color: #ffffff;
     box-shadow: 0 0 15px #ffffff, 0 0 5px #ffffff inset;
     background-color: #2a084d;
@@ -317,19 +312,18 @@ body {
     display: block;
     margin: 0 auto;
 }
-/* --- NUEVOS ESTILOS DE BOTÓN CON ESTRELLAS (ADAPTADOS) --- */
 
 .btn-stars {
     position: relative;
     padding: 12px 35px;
-    background: #1a052e; /* Color de fondo morado */
+    background: #1a052e;
     font-size: 18px;
     font-weight: bold;
-    font-family: 'Roboto', sans-serif; /* Usamos la fuente principal */
-    color: #ffffff; /* Color de texto blanco */
-    border: 2px solid #5d3a9b; /* Borde morado */
+    font-family: 'Roboto', sans-serif; 
+    color: #ffffff; 
+    border: 2px solid #5d3a9b; 
     border-radius: 10px;
-    box-shadow: 0 0 5px #a06fff; /* Sombra/resplandor morado */
+    box-shadow: 0 0 5px #a06fff;
     transition: all 0.3s ease-in-out;
     cursor: pointer;
 }
@@ -340,7 +334,7 @@ body {
     left: 20%;
     width: 25px;
     height: auto;
-    filter: drop-shadow(0 0 0 #a06fff); /* Sombra morada */
+    filter: drop-shadow(0 0 0 #a06fff);
     z-index: -5;
     transition: all 1s cubic-bezier(0.05, 0.83, 0.43, 0.96);
 }
@@ -351,7 +345,7 @@ body {
     left: 45%;
     width: 15px;
     height: auto;
-    filter: drop-shadow(0 0 0 #a06fff); /* Sombra morada */
+    filter: drop-shadow(0 0 0 #a06fff);
     z-index: -5;
     transition: all 1s cubic-bezier(0, 0.4, 0, 1.01);
 }
@@ -362,7 +356,7 @@ body {
     left: 40%;
     width: 5px;
     height: auto;
-    filter: drop-shadow(0 0 0 #a06fff); /* Sombra morada */
+    filter: drop-shadow(0 0 0 #a06fff);
     z-index: -5;
     transition: all 1s cubic-bezier(0, 0.4, 0, 1.01);
 }
@@ -373,7 +367,7 @@ body {
     left: 40%;
     width: 8px;
     height: auto;
-    filter: drop-shadow(0 0 0 #a06fff); /* Sombra morada */
+    filter: drop-shadow(0 0 0 #a06fff);
     z-index: -5;
     transition: all 0.8s cubic-bezier(0, 0.4, 0, 1.01);
 }
@@ -384,7 +378,7 @@ body {
     left: 45%;
     width: 15px;
     height: auto;
-    filter: drop-shadow(0 0 0 #a06fff); /* Sombra morada */
+    filter: drop-shadow(0 0 0 #a06fff);
     z-index: -5;
     transition: all 0.6s cubic-bezier(0, 0.4, 0, 1.01);
 }
@@ -395,18 +389,17 @@ body {
     left: 50%;
     width: 5px;
     height: auto;
-    filter: drop-shadow(0 0 0 #a06fff); /* Sombra morada */
+    filter: drop-shadow(0 0 0 #a06fff);
     z-index: -5;
     transition: all 0.8s ease;
 }
 
-/* Efecto al pasar el mouse O al seleccionar con teclado */
 .btn-stars:hover,
 .btn-stars.selected {
-    background: transparent; /* Fondo transparente */
-    color: #a06fff; /* Texto morado brillante */
-    border-color: #a06fff; /* Borde morado brillante */
-    box-shadow: 0 0 25px #a06fff; /* Resplandor morado brillante */
+    background: transparent;
+    color: #a06fff;
+    border-color: #a06fff;
+    box-shadow: 0 0 25px #a06fff;
 }
 
 .btn-stars:hover .star-1,
@@ -416,7 +409,7 @@ body {
     left: -30%;
     width: 25px;
     height: auto;
-    filter: drop-shadow(0 0 10px #a06fff); /* Sombra morada */
+    filter: drop-shadow(0 0 10px #a06fff);
     z-index: 2;
 }
 
@@ -427,7 +420,7 @@ body {
     left: 10%;
     width: 15px;
     height: auto;
-    filter: drop-shadow(0 0 10px #a06fff); /* Sombra morada */
+    filter: drop-shadow(0 0 10px #a06fff);
     z-index: 2;
 }
 
@@ -438,7 +431,7 @@ body {
     left: 25%;
     width: 5px;
     height: auto;
-    filter: drop-shadow(0 0 10px #a06fff); /* Sombra morada */
+    filter: drop-shadow(0 0 10px #a06fff);
     z-index: 2;
 }
 
@@ -449,7 +442,7 @@ body {
     left: 80%;
     width: 8px;
     height: auto;
-    filter: drop-shadow(0 0 10px #a06fff); /* Sombra morada */
+    filter: drop-shadow(0 0 10px #a06fff);
     z-index: 2;
 }
 
@@ -460,7 +453,7 @@ body {
     left: 115%;
     width: 15px;
     height: auto;
-    filter: drop-shadow(0 0 10px #a06fff); /* Sombra morada */
+    filter: drop-shadow(0 0 10px #a06fff);
     z-index: 2;
 }
 
@@ -471,10 +464,26 @@ body {
     left: 60%;
     width: 5px;
     height: auto;
-    filter: drop-shadow(0 0 10px #a06fff); /* Sombra morada */
+    filter: drop-shadow(0 0 10px #a06fff);
     z-index: 2;
 }
 
 .btn-stars .fil0 {
-    fill: #a06fff; /* Color de la estrella: morado brillante */
+    fill: #a06fff;
+}
+
+@keyframes button-pop {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.animate-pop {
+    animation: button-pop 0.3s ease-out;
 }
