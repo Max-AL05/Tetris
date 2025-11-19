@@ -282,30 +282,42 @@ window.onload = () => {
     }
 
     function draw() {
+        // --- CORRECCIÓN IMPORTANTE ---
+        // Si el juego está pausado, detenemos la función inmediatamente.
+        // Esto evita que las piezas sigan cayendo.
+        if (isPaused) return;
+
         if (tetromino) {
+            // Collision?
             if (tetromino.collides(i => ({ x: tetromino.x[i], y: tetromino.y[i] + 1 }))) {
                 tetromino.merge();
-                tetromino = null;
+                tetromino = null; // Prepare for new tetromino
 
+                // Check for completed rows
                 let completedRows = 0;
                 for (let y = FIELD_HEIGHT - 1; y >= MIN_VALID_ROW; --y)
                     if (FIELD[y].every(e => e !== false)) {
                         for (let ay = y; ay >= MIN_VALID_ROW; --ay)
                             FIELD[ay] = [...FIELD[ay - 1]];
+
                         ++completedRows;
+                        // Keep the same row
                         ++y;
                     }
 
                 if (completedRows) {
+                    // Print againt the table
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     for (let y = MIN_VALID_ROW; y < FIELD_HEIGHT; ++y) {
                         for (let x = 0; x < FIELD_WIDTH; ++x) {
                             if (FIELD[y][x] !== false) new Tetromino([x], [y], FIELD[y][x]).draw();
                         }
                     }
+
                     score += [40, 100, 300, 1200][completedRows - 1];
                     lines += completedRows;
                 } else {
+                    // Check if player has lost
                     if (FIELD[MIN_VALID_ROW - 1].some(block => block !== false)) {
                         gameOverModal.style.display = "block";
                         isGameOver = true;
@@ -313,17 +325,21 @@ window.onload = () => {
                         updateGameOverSelection();
                     }
                 }
+
             } else
                 tetromino.update(i => ++tetromino.y[i]);
         }
+        // No tetromino failing
         else {
             scoreLbl.innerText = score;
             linesLbl.innerText = lines;
-            
+
             spawnNewTetromino();
         }
 
-        if (!isGameOver) {
+        // --- CORRECCIÓN ---
+        // Solo programamos el siguiente frame si NO es Game Over Y NO está pausado
+        if (!isGameOver && !isPaused) {
             if (delay !== (currentBaseDelay / Tetromino.DELAY_INCREASED)) {
                 delay = currentBaseDelay;
             }
