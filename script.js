@@ -12,7 +12,7 @@ window.onload = () => {
         linesLbl = document.getElementById("lines"),
         canvas = document.getElementById("game-canvas"),
         ctx = canvas.getContext("2d"),
-        gameOverModal = document.getElementById("game-over-modal");
+        gameOverModal = document.getElementById("game-over-modal"),
         pauseModal = document.getElementById("pause-modal");
     
     const nextCanvas = document.getElementById("next-piece-canvas");
@@ -28,6 +28,7 @@ window.onload = () => {
     const questionText = document.getElementById("question-text");
     const answerOptions = document.getElementById("answer-options");
     const quizFeedback = document.getElementById("quiz-feedback");
+    const strikesLbl = document.getElementById("strikes-lbl");
     
 
     class Tetromino {
@@ -123,7 +124,7 @@ window.onload = () => {
         NEXT_CANVAS_HEIGHT = 4,
         
         TETROMINOES = [
-            new Tetromino([0, 0, 0, 0], [0, 1, 2, 3]),
+            new Tetromino([0, 0, 0, 0], [0, 1, 2, 3]), // I
             new Tetromino([0, 0, 1, 1], [0, 1, 0, 1]), // O
             new Tetromino([0, 1, 1, 1], [0, 0, 1, 2]), // L
             new Tetromino([0, 0, 0, 1], [0, 1, 2, 0]), // J
@@ -141,48 +142,31 @@ window.onload = () => {
         isPaused = false,
         numPlayers = 1,
         currentBaseDelay,
-        quizSelectedAnswerIndex = 0;
-        
+        quizSelectedAnswerIndex = 0,
+        strikes = 0;
+    
     let menuSelectionIndex = 0;
     const menuItems = [startButton, playersButton, controlsButton]; 
+    let gameOverSelectionIndex = 0; 
     const gameOverItems = [restartButton, menuButton];
+    let pauseSelectionIndex = 0;
+    const pauseItems = [resumeButton, pauseMenuButton];
 
 
     const questions = [
-        {
-            q: "¿Qué lenguaje se usa para estilizar una página web?",
-            options: ["JavaScript", "CSS", "HTML", "Python"],
-            correct: 1
-        },
-        {
-            q: "¿Qué significa 'DOM'?",
-            options: ["Document Object Model", "Data Object Model", "Direct Output Mainframe", "Digital Order Module"],
-            correct: 0
-        },
-        {
-            q: "La etiqueta <p> se usa para...",
-            options: ["Imágenes", "Enlaces", "Párrafos", "Listas"],
-            correct: 2
-        },
-        {
-            q: "¿Cuál NO es un tipo de dato primitivo en JS?",
-            options: ["String", "Number", "Boolean", "Object"],
-            correct: 3
-        }
+        { q: "¿Qué lenguaje se usa para estilizar una página web?", options: ["JavaScript", "CSS", "HTML", "Python"], correct: 1 },
+        { q: "¿Qué significa 'DOM'?", options: ["Document Object Model", "Data Object Model", "Direct Output Mainframe", "Digital Order Module"], correct: 0 },
+        { q: "La etiqueta <p> se usa para...", options: ["Imágenes", "Enlaces", "Párrafos", "Listas"], correct: 2 },
+        { q: "¿Cuál NO es un tipo de dato primitivo en JS?", options: ["String", "Number", "Boolean", "Object"], correct: 3 }
     ];
     let currentQuestionIndex = 0;
 
 
     playersButton.onclick = () => {
-        
         playersButton.classList.add('animate-pop');
-
         numPlayers = (numPlayers === 1) ? 2 : 1;
         playersButton.innerText = `Jugadores: ${numPlayers}`;
-
-        setTimeout(() => {
-            playersButton.classList.remove('animate-pop');
-        }, 300);
+        setTimeout(() => { playersButton.classList.remove('animate-pop'); }, 300);
     };
 
     startButton.onclick = () => {
@@ -195,7 +179,6 @@ window.onload = () => {
             quizContainer.style.display = "block"; 
             startQuiz(); 
         }
-        
         setup(); 
     };
 
@@ -212,6 +195,7 @@ window.onload = () => {
         menuSelectionIndex = 0;
         updateMenuSelection();
     };
+    
     controlsButton.onclick = () => {
         window.location.href = 'controles.html';
     };
@@ -223,15 +207,15 @@ window.onload = () => {
 
         if (isPaused) {
             pauseModal.style.display = "block";
+            pauseSelectionIndex = 0;
+            updatePauseSelection();
         } else {
             pauseModal.style.display = "none"; 
             draw();
         }
     }
 
-    resumeButton.onclick = () => {
-        togglePause();
-    };
+    resumeButton.onclick = () => togglePause();
 
     pauseMenuButton.onclick = () => {
         togglePause();
@@ -242,11 +226,16 @@ window.onload = () => {
         updateMenuSelection();
     };
 
-    
+    function triggerGameOver() {
+        isGameOver = true;
+        gameOverModal.style.display = "block";
+        gameOverSelectionIndex = 0;
+        updateGameOverSelection();
+    }
 
     function setup() {
         canvas.style.top = "14px";
-        canvas.style.left = "10px";
+        canvas.style.left = "14px";
         ctx.canvas.width = FIELD_WIDTH * Tetromino.BLOCK_SIZE;
         ctx.canvas.height = FIELD_HEIGHT * Tetromino.BLOCK_SIZE;
 
@@ -260,16 +249,20 @@ window.onload = () => {
     function reset() {
         FIELD.forEach((_, y) => FIELD[y] = Array.from({ length: FIELD_WIDTH }).map(_ => false));
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-
         nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
         
         currentBaseDelay = Tetromino.DELAY; 
         delay = currentBaseDelay;
         score = 0;
         lines = 0;
+        
+        strikes = 0;
+        updateStrikesDisplay();
 
         gameOverModal.style.display = "none";
+        pauseModal.style.display = "none";
         isGameOver = false;
+        isPaused = false;
 
         nextTetromino = generateNewTetromino();
         tetromino = null;
@@ -292,7 +285,6 @@ window.onload = () => {
                     if (FIELD[y].every(e => e !== false)) {
                         for (let ay = y; ay >= MIN_VALID_ROW; --ay)
                             FIELD[ay] = [...FIELD[ay - 1]];
-
                         ++completedRows;
                         ++y;
                     }
@@ -304,25 +296,19 @@ window.onload = () => {
                             if (FIELD[y][x] !== false) new Tetromino([x], [y], FIELD[y][x]).draw();
                         }
                     }
-
                     score += [40, 100, 300, 1200][completedRows - 1];
                     lines += completedRows;
                 } else {
                     if (FIELD[MIN_VALID_ROW - 1].some(block => block !== false)) {
-                        gameOverModal.style.display = "block";
-                        isGameOver = true;
-                        gameOverSelectionIndex = 0;
-                        updateGameOverSelection();
+                        triggerGameOver();
                     }
                 }
-
             } else
                 tetromino.update(i => ++tetromino.y[i]);
         }
         else {
             scoreLbl.innerText = score;
             linesLbl.innerText = lines;
-
             spawnNewTetromino();
         }
 
@@ -344,30 +330,23 @@ window.onload = () => {
     function spawnNewTetromino() {
         tetromino = nextTetromino; 
         nextTetromino = generateNewTetromino(); 
-
         const middle = Math.floor(FIELD_WIDTH / 2);
         tetromino.x = tetromino.x.map(x => x + middle);
-
         tetromino.draw(ctx, 0, 0);
-        
         drawNextPiece(); 
     }
 
     function drawNextPiece() {
         nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
         if (!nextTetromino) return;
-
         const minX = Math.min(...nextTetromino.x);
         const maxX = Math.max(...nextTetromino.x);
         const minY = Math.min(...nextTetromino.y);
         const maxY = Math.max(...nextTetromino.y);
-
         const pieceWidth = maxX - minX + 1;
         const pieceHeight = maxY - minY + 1;
-
         const offsetX = (NEXT_CANVAS_WIDTH - pieceWidth) / 2 - minX;
         const offsetY = (NEXT_CANVAS_HEIGHT - pieceHeight) / 2 - minY;
-
         nextTetromino.draw(nextCtx, offsetX, offsetY);
     }
 
@@ -379,23 +358,18 @@ window.onload = () => {
     function showNextQuestion() {
         answerOptions.innerHTML = "";
         quizSelectedAnswerIndex = 0; 
-
         if (currentQuestionIndex >= questions.length) {
             currentQuestionIndex = 0; 
         }
-
         const q = questions[currentQuestionIndex];
         questionText.innerText = q.q;
-
         q.options.forEach((option, index) => {
             const button = document.createElement("button");
             button.innerText = option;
             button.style.pointerEvents = "none"; 
-            
             if (index === quizSelectedAnswerIndex) {
                 button.classList.add('selected');
             }
-            
             answerOptions.appendChild(button);
         });
     }
@@ -410,13 +384,19 @@ window.onload = () => {
             }
         });
     }
+    
+    function updateStrikesDisplay() {
+        let displayString = "";
+        for(let i = 0; i < strikes; i++) {
+            displayString += "X ";
+        }
+        if(strikesLbl) strikesLbl.innerText = displayString;
+    }
 
     function checkAnswer(selectedIndex, correctIndex) {
-        
         if (quizFeedback.className.includes('show')) {
             return;
         }
-
         const buttons = answerOptions.querySelectorAll('button');
         buttons.forEach(button => button.disabled = true);
 
@@ -428,13 +408,21 @@ window.onload = () => {
         } else {
             quizFeedback.innerText = "¡Incorrecto!";
             quizFeedback.className = 'incorrect show'; 
-            speedUpTetris();
+            
+            strikes++; 
+            updateStrikesDisplay();
+            speedUpTetris(); 
         }
         
         setTimeout(() => {
             quizFeedback.className = ''; 
-            currentQuestionIndex++;
-            showNextQuestion();
+            
+            if (strikes >= 3) {
+                triggerGameOver();
+            } else {
+                currentQuestionIndex++;
+                showNextQuestion();
+            }
         }, 1000); 
     }
 
@@ -447,21 +435,22 @@ window.onload = () => {
 
     function updateMenuSelection() {
         menuItems.forEach((item, index) => {
-            if (index === menuSelectionIndex) {
-                item.classList.add('selected');
-            } else {
-                item.classList.remove('selected');
-            }
+            if (index === menuSelectionIndex) item.classList.add('selected');
+            else item.classList.remove('selected');
         });
     }
     
     function updateGameOverSelection() {
         gameOverItems.forEach((button, index) => {
-            if (index === gameOverSelectionIndex) {
-                button.classList.add('selected');
-            } else {
-                button.classList.remove('selected');
-            }
+            if (index === gameOverSelectionIndex) button.classList.add('selected');
+            else button.classList.remove('selected');
+        });
+    }
+
+    function updatePauseSelection() {
+        pauseItems.forEach((button, index) => {
+            if (index === pauseSelectionIndex) button.classList.add('selected');
+            else button.classList.remove('selected');
         });
     }
 
@@ -473,25 +462,44 @@ window.onload = () => {
             return;
         }
 
-        if (isPaused) return;
+        if (isPaused) {
+             switch (event.key) {
+                case "a": case "A": case "ArrowLeft":
+                    pauseSelectionIndex--;
+                    if (pauseSelectionIndex < 0) pauseSelectionIndex = pauseItems.length - 1;
+                    updatePauseSelection();
+                    handled = true;
+                    break;
+                case "d": case "D": case "ArrowRight":
+                    pauseSelectionIndex++;
+                    if (pauseSelectionIndex >= pauseItems.length) pauseSelectionIndex = 0;
+                    updatePauseSelection();
+                    handled = true;
+                    break;
+                case " ": case "q": case "Q": 
+                    pauseItems[pauseSelectionIndex].click();
+                    handled = true;
+                    break;
+            }
+            if (handled) event.preventDefault();
+            return; 
+        }
 
         if (menuContainer.style.display === "flex") {
             switch (event.key) {
-                case "ArrowUp":
+                case "ArrowUp": case "w": case "W":
                     menuSelectionIndex--;
                     if (menuSelectionIndex < 0) menuSelectionIndex = menuItems.length - 1;
                     updateMenuSelection();
                     handled = true;
                     break;
-                case "ArrowDown":
-                    case "b":
-                    case "B":
+                case "ArrowDown": case "s": case "S":
                     menuSelectionIndex++;
                     if (menuSelectionIndex >= menuItems.length) menuSelectionIndex = 0;
                     updateMenuSelection();
                     handled = true;
                     break;
-                case " ":
+                case " ": 
                     menuItems[menuSelectionIndex].click(); 
                     handled = true;
                     break;
@@ -500,17 +508,13 @@ window.onload = () => {
         
         else if (isGameOver) {
              switch (event.key) {
-                case "ArrowLeft":
-                case "a":
-                case "A":
+                case "ArrowLeft": case "a": case "A":
                     gameOverSelectionIndex--;
                     if (gameOverSelectionIndex < 0) gameOverSelectionIndex = gameOverItems.length - 1;
                     updateGameOverSelection();
                     handled = true;
                     break;
-                case "ArrowRight":
-                case "d":
-                case "D":
+                case "ArrowRight": case "d": case "D":
                     gameOverSelectionIndex++;
                     if (gameOverSelectionIndex >= gameOverItems.length) gameOverSelectionIndex = 0;
                     updateGameOverSelection();
@@ -527,22 +531,19 @@ window.onload = () => {
             const quizButtons = answerOptions.querySelectorAll('button');
             if (quizButtons.length > 0) {
                  switch (event.key) {
-                    case "w": 
-                    case "W":
+                    case "w": case "W":
                         quizSelectedAnswerIndex--;
                         if (quizSelectedAnswerIndex < 0) quizSelectedAnswerIndex = quizButtons.length - 1;
                         updateQuizSelection();
                         handled = true;
                         break;
-                    case "s": 
-                    case "S":
+                    case "s": case "S":
                         quizSelectedAnswerIndex++;
                         if (quizSelectedAnswerIndex >= quizButtons.length) quizSelectedAnswerIndex = 0;
                         updateQuizSelection();
                         handled = true;
                         break;
-                    case "q":
-                    case "Q":
+                    case "q": case "Q":
                         const q = questions[currentQuestionIndex];
                         checkAnswer(quizSelectedAnswerIndex, q.correct);
                         handled = true;
@@ -567,23 +568,30 @@ window.onload = () => {
                     delay = currentBaseDelay / Tetromino.DELAY_INCREASED; 
                     handled = true;
                     break;
-                case " ": // Espacio
+                case " ": 
                     tetromino.rotate();
+                    handled = true;
+                    break;
+                
+                case "a": case "A":
+                    if (!tetromino.collides(i => ({ x: tetromino.x[i] - 1, y: tetromino.y[i] })))
+                        tetromino.update(i => --tetromino.x[i]);
+                    handled = true;
+                    break;
+                case "d": case "D":
+                    if (!tetromino.collides(i => ({ x: tetromino.x[i] + 1, y: tetromino.y[i] })))
+                        tetromino.update(i => ++tetromino.x[i]);
                     handled = true;
                     break;
             }
         }
         
-        if (handled) {
-            event.preventDefault();
-        }
+        if (handled) event.preventDefault();
     }
     
     window.onkeyup = event => {
-        if (isGameOver || gameArea.style.display === "none") return;
-
-        if (event.key === "ArrowDown")
-            delay = currentBaseDelay; 
+        if (isGameOver || gameArea.style.display === "none" || isPaused) return;
+        if (event.key === "ArrowDown") delay = currentBaseDelay; 
     }
     
     updateMenuSelection();
