@@ -13,7 +13,7 @@ window.onload = () => {
         canvas = document.getElementById("game-canvas"),
         ctx = canvas.getContext("2d"),
         gameOverModal = document.getElementById("game-over-modal");
-        pauseModal = document.getElementById("pause-modal"); // <-- NUEVO
+        pauseModal = document.getElementById("pause-modal");
     
     const nextCanvas = document.getElementById("next-piece-canvas");
     const nextCtx = nextCanvas.getContext("2d");
@@ -21,8 +21,8 @@ window.onload = () => {
     const restartButton = document.getElementById("restart-button");
     const menuButton = document.getElementById("menu-button");
 
-    const resumeButton = document.getElementById("resume-button"); // <-- NUEVO
-    const pauseMenuButton = document.getElementById("pause-menu-button"); //
+    const resumeButton = document.getElementById("resume-button");
+    const pauseMenuButton = document.getElementById("pause-menu-button");
 
     const quizContainer = document.getElementById("quiz-container");
     const questionText = document.getElementById("question-text");
@@ -123,6 +123,7 @@ window.onload = () => {
         NEXT_CANVAS_HEIGHT = 4,
         
         TETROMINOES = [
+            new Tetromino([0, 0, 0, 0], [0, 1, 2, 3]),
             new Tetromino([0, 0, 1, 1], [0, 1, 0, 1]), // O
             new Tetromino([0, 1, 1, 1], [0, 0, 1, 2]), // L
             new Tetromino([0, 0, 0, 1], [0, 1, 2, 0]), // J
@@ -137,7 +138,7 @@ window.onload = () => {
         score,
         lines,
         isGameOver = false,
-        isPaused = false, // <-- NUEVO: Estado de pausa
+        isPaused = false,
         numPlayers = 1,
         currentBaseDelay,
         quizSelectedAnswerIndex = 0;
@@ -172,7 +173,6 @@ window.onload = () => {
     let currentQuestionIndex = 0;
 
 
-    // --- LÓGICA DEL MENÚ --- //
     playersButton.onclick = () => {
         
         playersButton.classList.add('animate-pop');
@@ -216,18 +216,16 @@ window.onload = () => {
         window.location.href = 'controles.html';
     };
 
-    // Función para alternar pausa
     function togglePause() {
         if (isGameOver || gameArea.style.display === "none") return;
 
         isPaused = !isPaused;
 
         if (isPaused) {
-            pauseModal.style.display = "block"; // Mostrar modal
-            // Opcional: Detener música si la hubiera
+            pauseModal.style.display = "block";
         } else {
-            pauseModal.style.display = "none"; // Ocultar modal
-            draw(); // Reanudar bucle de juego
+            pauseModal.style.display = "none"; 
+            draw();
         }
     }
 
@@ -236,7 +234,7 @@ window.onload = () => {
     };
 
     pauseMenuButton.onclick = () => {
-        togglePause(); // Quitar estado de pausa
+        togglePause();
         reset(); 
         gameArea.style.display = "none"; 
         menuContainer.style.display = "flex";
@@ -282,18 +280,13 @@ window.onload = () => {
     }
 
     function draw() {
-        // --- CORRECCIÓN IMPORTANTE ---
-        // Si el juego está pausado, detenemos la función inmediatamente.
-        // Esto evita que las piezas sigan cayendo.
         if (isPaused) return;
 
         if (tetromino) {
-            // Collision?
             if (tetromino.collides(i => ({ x: tetromino.x[i], y: tetromino.y[i] + 1 }))) {
                 tetromino.merge();
-                tetromino = null; // Prepare for new tetromino
+                tetromino = null;
 
-                // Check for completed rows
                 let completedRows = 0;
                 for (let y = FIELD_HEIGHT - 1; y >= MIN_VALID_ROW; --y)
                     if (FIELD[y].every(e => e !== false)) {
@@ -301,12 +294,10 @@ window.onload = () => {
                             FIELD[ay] = [...FIELD[ay - 1]];
 
                         ++completedRows;
-                        // Keep the same row
                         ++y;
                     }
 
                 if (completedRows) {
-                    // Print againt the table
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     for (let y = MIN_VALID_ROW; y < FIELD_HEIGHT; ++y) {
                         for (let x = 0; x < FIELD_WIDTH; ++x) {
@@ -317,7 +308,6 @@ window.onload = () => {
                     score += [40, 100, 300, 1200][completedRows - 1];
                     lines += completedRows;
                 } else {
-                    // Check if player has lost
                     if (FIELD[MIN_VALID_ROW - 1].some(block => block !== false)) {
                         gameOverModal.style.display = "block";
                         isGameOver = true;
@@ -329,7 +319,6 @@ window.onload = () => {
             } else
                 tetromino.update(i => ++tetromino.y[i]);
         }
-        // No tetromino failing
         else {
             scoreLbl.innerText = score;
             linesLbl.innerText = lines;
@@ -337,8 +326,6 @@ window.onload = () => {
             spawnNewTetromino();
         }
 
-        // --- CORRECCIÓN ---
-        // Solo programamos el siguiente frame si NO es Game Over Y NO está pausado
         if (!isGameOver && !isPaused) {
             if (delay !== (currentBaseDelay / Tetromino.DELAY_INCREASED)) {
                 delay = currentBaseDelay;
@@ -481,13 +468,11 @@ window.onload = () => {
     window.onkeydown = event => {
         let handled = false; 
         
-        // --- DETECCIÓN DE PAUSA (GLOBAL EN JUEGO) ---
         if (event.key === "p" || event.key === "P") {
             togglePause();
-            return; // Detener propagación
+            return;
         }
 
-        // Si está en pausa, ignorar otras teclas (excepto navegación de menú de pausa si la agregamos después)
         if (isPaused) return;
 
         if (menuContainer.style.display === "flex") {
@@ -499,7 +484,7 @@ window.onload = () => {
                     handled = true;
                     break;
                 case "ArrowDown":
-                    case "b": // <-- NUEVO: Jugador 2 Mueve Derecha
+                    case "b":
                     case "B":
                     menuSelectionIndex++;
                     if (menuSelectionIndex >= menuItems.length) menuSelectionIndex = 0;
@@ -516,7 +501,7 @@ window.onload = () => {
         else if (isGameOver) {
              switch (event.key) {
                 case "ArrowLeft":
-                case "a": // <-- NUEVO: Jugador 2 Mueve Izquierda
+                case "a":
                 case "A":
                     gameOverSelectionIndex--;
                     if (gameOverSelectionIndex < 0) gameOverSelectionIndex = gameOverItems.length - 1;
@@ -524,7 +509,7 @@ window.onload = () => {
                     handled = true;
                     break;
                 case "ArrowRight":
-                case "d": // <-- NUEVO: Jugador 2 Mueve Derecha
+                case "d":
                 case "D":
                     gameOverSelectionIndex++;
                     if (gameOverSelectionIndex >= gameOverItems.length) gameOverSelectionIndex = 0;
