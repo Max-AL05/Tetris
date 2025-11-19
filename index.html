@@ -2,9 +2,9 @@
 
 <head>
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/x-icon" href="resources/logo.ico">
+    <link rel="icon" type="image/x-icon" href="imagenes/logo.ico">
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/x-icon" href="resources/logo.ico">
+    <link rel="icon" type="image/x-icon" href="imagenes/logo.ico">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,7 +14,7 @@
 <body>
 
     <div id="menu-container">
-        <img src="resources/logo.png" id="logo-menu">
+        <img src="imagenes/logo.png" id="logo-menu">
         <button id="start-button" class="btn-stars">
             Iniciar Partida
             <div class="star-1"><svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd" viewBox="0 0 784.11 815.53" xmlns:xlink="http://www.w3.org/1999/xlink"><defs></defs><g id="Layer_x0020_1"><metadata id="CorelCorpID_0Corel-Layer"></metadata><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg></div>
@@ -62,7 +62,7 @@
         
         <div id="wrapper">
             <div id="left-div">
-                <img src="resources/logo.png" id="logo">
+                <img src="imagenes/logo.png" id="logo">
             <hr>
 
             <div id="next-piece-container">
@@ -80,6 +80,7 @@
             </div>
             <div id="game-container">
                 <canvas id="game-canvas"></canvas>
+                
                 <div id="game-over-modal">
                     <h2>Game Over</h2>
                     <div class="modal-button-container">
@@ -103,8 +104,17 @@
                             <div class="star-5"><svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd" viewBox="0 0 784.11 815.53" xmlns:xlink="http://www.w3.org/1999/xlink"><defs></defs><g id="Layer_x0020_1"><metadata id="CorelCorpID_0Corel-Layer"></metadata><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg></div>
                             <div class="star-6"><svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd" viewBox="0 0 784.11 815.53" xmlns:xlink="http://www.w3.org/1999/xlink"><defs></defs><g id="Layer_x0020_1"><metadata id="CorelCorpID_0Corel-Layer"></metadata><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg></div>
                         </button>
-                        
                     </div>
+                </div>
+                <div id="pause-modal">
+                <h2>Pausa</h2>
+                <div class="modal-button-container">
+                    <button id="resume-button" class="btn-stars">
+                        Continuar
+                        </button>
+                    <button id="pause-menu-button" class="btn-stars">
+                        Menú
+                        </button>
                 </div>
             </div>
         </div>

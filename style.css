@@ -126,7 +126,8 @@ body {
     box-shadow: 0 0 15px #a06fff, 0 0 5px #a06fff inset;
 }
 
-#game-over-modal {
+#game-over-modal,
+#pause-modal {
     display: none; 
     position: fixed;
     top: 50%;
@@ -144,7 +145,8 @@ body {
 }
 
 
-#game-over-modal h2 {
+#game-over-modal h2,
+#pause-modal h2 {
     font-size: 26px;
     font-weight: bold;
     font-family: "Zain", sans-serif;
@@ -153,7 +155,8 @@ body {
     white-space: nowrap;
 }
 
-#game-over-modal .modal-button-container {
+#game-over-modal .modal-button-container,
+#pause-modal .modal-button-container {
     display: flex; 
     justify-content: center; 
     gap: 55px; 
@@ -563,4 +566,24 @@ body {
     font-weight: 700;
     text-align: right;
     min-width: 100px;
+}
+
+#pause-modal button {
+    /* Heredarán de .btn-stars si la usas, pero esto asegura el estilo base */
+    padding: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    font-family: inherit;
+    background-color: #1a052e;
+    color: white;
+    border: 2px solid #5d3a9b;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 0 5px #a06fff;
+    transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+#pause-modal button:hover {
+    background-color: #2a084d;
+    border-color: #7b4fde;
+    box-shadow: 0 0 15px #a06fff, 0 0 5px #a06fff inset;
 }

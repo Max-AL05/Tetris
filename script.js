@@ -13,12 +13,16 @@ window.onload = () => {
         canvas = document.getElementById("game-canvas"),
         ctx = canvas.getContext("2d"),
         gameOverModal = document.getElementById("game-over-modal");
+        pauseModal = document.getElementById("pause-modal"); // <-- NUEVO
     
     const nextCanvas = document.getElementById("next-piece-canvas");
     const nextCtx = nextCanvas.getContext("2d");
     
     const restartButton = document.getElementById("restart-button");
     const menuButton = document.getElementById("menu-button");
+
+    const resumeButton = document.getElementById("resume-button"); // <-- NUEVO
+    const pauseMenuButton = document.getElementById("pause-menu-button"); //
 
     const quizContainer = document.getElementById("quiz-container");
     const questionText = document.getElementById("question-text");
@@ -39,7 +43,7 @@ window.onload = () => {
             if (color !== null) {
                 this.color = color;
                 this.img = new Image();
-                this.img.src = `resources/${Tetromino.COLORS[color]}.jpg`
+                this.img.src = `imagenes/${Tetromino.COLORS[color]}.jpg`
             }
         }
 
@@ -133,6 +137,7 @@ window.onload = () => {
         score,
         lines,
         isGameOver = false,
+        isPaused = false, // <-- NUEVO: Estado de pausa
         numPlayers = 1,
         currentBaseDelay,
         quizSelectedAnswerIndex = 0;
@@ -210,6 +215,36 @@ window.onload = () => {
     controlsButton.onclick = () => {
         window.location.href = 'controles.html';
     };
+
+    // Función para alternar pausa
+    function togglePause() {
+        if (isGameOver || gameArea.style.display === "none") return;
+
+        isPaused = !isPaused;
+
+        if (isPaused) {
+            pauseModal.style.display = "block"; // Mostrar modal
+            // Opcional: Detener música si la hubiera
+        } else {
+            pauseModal.style.display = "none"; // Ocultar modal
+            draw(); // Reanudar bucle de juego
+        }
+    }
+
+    resumeButton.onclick = () => {
+        togglePause();
+    };
+
+    pauseMenuButton.onclick = () => {
+        togglePause(); // Quitar estado de pausa
+        reset(); 
+        gameArea.style.display = "none"; 
+        menuContainer.style.display = "flex";
+        menuSelectionIndex = 0;
+        updateMenuSelection();
+    };
+
+    
 
     function setup() {
         canvas.style.top = "14px";
@@ -430,15 +465,26 @@ window.onload = () => {
     window.onkeydown = event => {
         let handled = false; 
         
+        // --- DETECCIÓN DE PAUSA (GLOBAL EN JUEGO) ---
+        if (event.key === "p" || event.key === "P") {
+            togglePause();
+            return; // Detener propagación
+        }
+
+        // Si está en pausa, ignorar otras teclas (excepto navegación de menú de pausa si la agregamos después)
+        if (isPaused) return;
+
         if (menuContainer.style.display === "flex") {
             switch (event.key) {
-                case "ArrowUp": 
+                case "ArrowUp":
                     menuSelectionIndex--;
                     if (menuSelectionIndex < 0) menuSelectionIndex = menuItems.length - 1;
                     updateMenuSelection();
                     handled = true;
                     break;
-                case "ArrowDown": 
+                case "ArrowDown":
+                    case "b": // <-- NUEVO: Jugador 2 Mueve Derecha
+                    case "B":
                     menuSelectionIndex++;
                     if (menuSelectionIndex >= menuItems.length) menuSelectionIndex = 0;
                     updateMenuSelection();
@@ -453,13 +499,17 @@ window.onload = () => {
         
         else if (isGameOver) {
              switch (event.key) {
-                case "ArrowLeft": 
+                case "ArrowLeft":
+                case "a": // <-- NUEVO: Jugador 2 Mueve Izquierda
+                case "A":
                     gameOverSelectionIndex--;
                     if (gameOverSelectionIndex < 0) gameOverSelectionIndex = gameOverItems.length - 1;
                     updateGameOverSelection();
                     handled = true;
                     break;
-                case "ArrowRight": 
+                case "ArrowRight":
+                case "d": // <-- NUEVO: Jugador 2 Mueve Derecha
+                case "D":
                     gameOverSelectionIndex++;
                     if (gameOverSelectionIndex >= gameOverItems.length) gameOverSelectionIndex = 0;
                     updateGameOverSelection();
