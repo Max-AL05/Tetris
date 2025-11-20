@@ -154,10 +154,45 @@ window.onload = () => {
 
 
     const questions = [
-        { q: "¿Qué lenguaje se usa para estilizar una página web?", options: ["JavaScript", "CSS", "HTML", "Python"], correct: 1 },
-        { q: "¿Qué significa 'DOM'?", options: ["Document Object Model", "Data Object Model", "Direct Output Mainframe", "Digital Order Module"], correct: 0 },
-        { q: "La etiqueta <p> se usa para...", options: ["Imágenes", "Enlaces", "Párrafos", "Listas"], correct: 2 },
-        { q: "¿Cuál NO es un tipo de dato primitivo en JS?", options: ["String", "Number", "Boolean", "Object"], correct: 3 }
+        { q: "¿Qué patrón de diseño usa JavaScript para la herencia basada en prototipos?", options: ["Singleton", "Factory", "Prototype", "Observer"], correct: 2 },
+
+        { q: "¿En qué contexto 'this' se refiere al objeto global en modo estricto?", options: ["En funciones globales", "En métodos de objeto", "En constructores", "Nunca en modo estricto"], correct: 3 },
+
+        { q: "¿Qué algoritmo usa Git para calcular diferencias entre archivos?", options: ["Myers diff", "Levenshtein", "Dijkstra", "Boyer-Moore"], correct: 0 },
+
+        { q: "¿Cuál es la complejidad temporal del algoritmo QuickSort en el peor caso?", options: ["O(n log n)", "O(n²)", "O(log n)", "O(n)"], correct: 1 },
+
+        { q: "¿Qué principio SOLID viola una clase que tiene múltiples responsabilidades?", options: ["Open/Closed", "Liskov Substitution", "Interface Segregation", "Single Responsibility"], correct: 3 },
+
+        { q: "¿Qué estructura de datos subyace a la implementación de async/await en JavaScript?", options: ["Cola de prioridades", "Pila de llamadas", "Promises", "Generadores"], correct: 3 },
+
+        { q: "¿En qué capa del modelo OSI opera el protocolo HTTP?", options: ["Capa de aplicación", "Capa de transporte", "Capa de sesión", "Capa de presentación"], correct: 0 },
+
+        { q: "¿Qué técnica de optimización evita recálculos mediante almacenamiento en caché?", options: ["Memoization", "Tabulation", "Dynamic Programming", "Greedy Algorithm"], correct: 0 },
+
+        { q: "¿Qué patrón resuelve el problema de herencia múltiple en lenguajes como Java?", options: ["Decorator", "Adapter", "Composite", "Interface"], correct: 0 },
+
+        { q: "¿Qué estructura utiliza React para el reconciliation algorithm?", options: ["DOM Virtual", "Árbol Rojo-Negro", "Grafos de dependencia", "Fibers"], correct: 3 },
+
+        { q: "¿Qué paradigma promueve la inmutabilidad como principio central?", options: ["Programación funcional", "Orientación a objetos", "Programación procedural", "Programación lógica"], correct: 0 },
+
+        { q: "¿Qué algoritmo de consenso usa Blockchain en Ethereum?", options: ["Proof of Work", "Proof of Stake", "Byzantine Fault Tolerance", "Raft"], correct: 1 },
+
+        { q: "¿Qué característica permite a un lenguaje manejar múltiples operaciones simultáneas?", options: ["Concurrencia", "Paralelismo", "Asincronía", "Multithreading"], correct: 0 },
+
+        { q: "¿Qué patrón de arquitectura separa responsabilidades en Modelo, Vista y Controlador?", options: ["MVC", "MVVM", "MVP", "Redux"], correct: 0 },
+
+        { q: "¿Qué protocolo proporciona comunicación cifrada segura en internet?", options: ["HTTPS", "HTTP/2", "WebSocket", "TCP/IP"], correct: 0 },
+
+        { q: "¿Qué estructura de datos es óptima para implementar una cola de prioridad?", options: ["Heap", "Árbol binario", "Lista enlazada", "Array"], correct: 0 },
+
+        { q: "¿Qué principio establece que 'las entidades deben estar abiertas para extensión pero cerradas para modificación'?", options: ["Open/Closed", "Liskov Substitution", "Dependency Inversion", "Interface Segregation"], correct: 0 },
+
+        { q: "¿Qué algoritmo garantiza exclusión mutua en programación concurrente?", options: ["Mutex", "Semáforo", "Monitor", "Todos los anteriores"], correct: 3 },
+
+        { q: "¿Qué tipo de sistema de tipos tiene TypeScript?", options: ["Estático y fuerte", "Dinámico y débil", "Estático y débil", "Dinámico y fuerte"], correct: 0 },
+
+        { q: "¿Qué patrón permite a un objeto notificar cambios a otros objetos?", options: ["Observer", "Publisher/Subscriber", "Mediator", "Todos los anteriores"], correct: 3 }
     ];
     let currentQuestionIndex = 0;
 

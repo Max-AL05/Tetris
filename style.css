@@ -1,9 +1,7 @@
-/* --- CONFIGURACIÓN GENERAL --- */
 body {
     margin: 0;
     padding: 0;
     
-    /* Fondo estilo Aurora */
     background: #020024;
     background: linear-gradient(0deg, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 50%, rgba(204, 0, 255, 1) 100%);
     
@@ -17,14 +15,13 @@ body {
     
     text-align: center;
     color: white;
-    font-family: "Zain", sans-serif; /* Asegúrate de importar esta fuente en tu HTML */
+    font-family: "Zain", sans-serif;
 }
 
-/* --- PANELES DE JUEGO --- */
 #left-div {
     display: inline-block;
     vertical-align: top;
-    margin: 0 20px 20px 20px; /* Corregido: añadido 'px' */
+    margin: 0 20px 20px 20px;
     padding: 20px;
     width: 310px;
     height: 616px;
@@ -51,7 +48,7 @@ body {
 }
 
 #game-area {
-    display: none; /* Se activa con JS (flex) */
+    display: none;
     flex-direction: row;
     align-items: flex-start;
     gap: 20px;
@@ -76,7 +73,6 @@ body {
     height: 580px;
     width: 280px;
     position: absolute;
-    /* Centrado del canvas dentro del contenedor */
     top: 14px; 
     left: 14px;
 }
@@ -88,10 +84,9 @@ body {
     font-weight: bold;
     font-family: "Zain", sans-serif;
     text-align: left;
-    margin: 15px 0; /* Corregido: añadido 'px' */
+    margin: 15px 0;
 }
 
-/* --- PANEL DE SIGUIENTE PIEZA --- */
 #next-piece-container {
     margin: 20px 0;
     text-align: center;
@@ -114,7 +109,6 @@ body {
     margin: 0 auto;
 }
 
-/* --- MENÚ PRINCIPAL --- */
 #menu-container {
     display: flex; 
     flex-direction: column;
@@ -135,8 +129,6 @@ body {
     width: 250px;
 }
 
-/* --- MODALES (PAUSA Y GAME OVER) --- */
-/* CORREGIDO: Esta regla es para los contenedores, no para los botones seleccionados */
 #game-over-modal,
 #pause-modal {
     display: none; 
@@ -151,7 +143,7 @@ body {
     border-radius: 10px;
     box-shadow: 0 0 15px #a06fff, 0 0 5px #a06fff inset;
     
-    padding: 25px; /* Corregido: padding razonable */
+    padding: 25px;
     text-align: center;
     min-width: 300px;
 }
@@ -162,7 +154,7 @@ body {
     font-weight: bold;
     font-family: "Zain", sans-serif;
     color: white;
-    margin: 0 0 20px 0; /* Corregido márgenes */
+    margin: 0 0 20px 0;
     white-space: nowrap;
 }
 
@@ -170,10 +162,9 @@ body {
 #pause-modal .modal-button-container {
     display: flex; 
     justify-content: center; 
-    gap: 15px; /* Ajustado para que quepan los botones */
+    gap: 15px;
 }
 
-/* --- QUIZ (JUGADOR 2) --- */
 #quiz-container {
     display: none;
     width: 350px;
@@ -187,7 +178,7 @@ body {
     padding: 20px;
     font-family: "Zain", sans-serif;
     color: white;
-    position: relative; /* Necesario para centrar el feedback */
+    position: relative;
 }
 
 #quiz-container h3 {
@@ -219,7 +210,6 @@ body {
     gap: 10px;
 }
 
-/* Estilos botones de respuesta (simples) */
 #answer-options button {
     padding: 12px;
     font-size: 16px; 
@@ -238,11 +228,10 @@ body {
 #answer-options button:hover,
 #answer-options button.selected {
     background-color: #2a084d;
-    border-color: #ffffff; /* Borde blanco al seleccionar */
+    border-color: #ffffff;
     box-shadow: 0 0 15px #ffffff, 0 0 5px #ffffff inset;
 }
 
-/* --- FEEDBACK QUIZ (Animación) --- */
 @keyframes pulse-fade {
     0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
     30% { transform: translate(-50%, -50%) scale(1.05); opacity: 1; }
@@ -261,7 +250,7 @@ body {
     font-size: 30px;
     font-weight: bold;
     font-family: "Zain", sans-serif;
-    pointer-events: none; /* Para que no bloquee clics si se queda pegado */
+    pointer-events: none;
 }
 
 #quiz-feedback.show {
@@ -283,19 +272,22 @@ body {
     box-shadow: 0 0 15px #ff4e4e, 0 0 5px #ff4e4e inset;
 }
 
-/* --- PANTALLA DE CONTROLES --- */
 #controls-container {
     display: flex;
     flex-direction: column;
-    width: 400px;
-    height: auto; /* Corregido: auto ajusta mejor al contenido */
-    max-height: 90vh; /* Evita que se salga de la pantalla */
+    
+    width: 800px;
+    max-width: 90vw;
+    
+    height: auto;
+    max-height: 90vh;
+    
     background-color: #1a052e;
     border: 2px solid #5d3a9b;
     border-radius: 10px;
     box-shadow: 0 0 15px #a06fff;
     box-sizing: border-box;
-    padding: 25px;
+    padding: 10px 50px;
     text-align: left;
 }
 
@@ -320,10 +312,10 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 16px;
+    font-size: 14px;
     line-height: 1.5;
     margin: 0;
-    padding: 12px 10px;
+    padding: 6.5px 10px;
     border-bottom: 1px solid #5d3a9b; 
 }
 
@@ -344,7 +336,6 @@ body {
     margin-top: 20px;
 }
 
-/* --- ESTILOS DE BOTONES CON ESTRELLAS (.btn-stars) --- */
 .btn-stars {
     position: relative;
     padding: 12px 35px;
@@ -363,9 +354,8 @@ body {
     box-sizing: border-box;
 }
 
-/* Clase extra si necesitas otro tamaño en algún lugar */
 .btn-stars2 {
-    position: relative; /* Corregido 'center' a 'relative' */
+    position: relative;
     padding: 12px;
     text-align: center;
     background: #1a052e;
@@ -380,7 +370,6 @@ body {
     cursor: pointer;
 }
 
-/* Animación de Pop al presionar */
 @keyframes button-pop {
     0% { transform: scale(1); }
     50% { transform: scale(1.05); }
@@ -391,7 +380,6 @@ body {
     animation: button-pop 0.3s ease-out;
 }
 
-/* Estilos Hover y Selected para .btn-stars */
 .btn-stars:hover,
 .btn-stars.selected {
     background: transparent;
@@ -400,7 +388,6 @@ body {
     box-shadow: 0 0 25px #a06fff;
 }
 
-/* Animación de estrellas (SVG) */
 .btn-stars .star-1, .btn-stars .star-2, .btn-stars .star-3,
 .btn-stars .star-4, .btn-stars .star-5, .btn-stars .star-6 {
     position: absolute;
@@ -409,7 +396,6 @@ body {
     z-index: -5;
 }
 
-/* Posiciones iniciales de estrellas */
 .btn-stars .star-1 { top: 20%; left: 20%; width: 25px; transition: all 1s cubic-bezier(0.05, 0.83, 0.43, 0.96); }
 .btn-stars .star-2 { top: 45%; left: 45%; width: 15px; transition: all 1s cubic-bezier(0, 0.4, 0, 1.01); }
 .btn-stars .star-3 { top: 40%; left: 40%; width: 5px; transition: all 1s cubic-bezier(0, 0.4, 0, 1.01); }
@@ -417,7 +403,6 @@ body {
 .btn-stars .star-5 { top: 25%; left: 45%; width: 15px; transition: all 0.6s cubic-bezier(0, 0.4, 0, 1.01); }
 .btn-stars .star-6 { top: 5%;  left: 50%; width: 5px; transition: all 0.8s ease; }
 
-/* Posiciones finales (hover/selected) de estrellas */
 .btn-stars:hover .star-1, .btn-stars.selected .star-1 { top: -80%; left: -30%; width: 25px; filter: drop-shadow(0 0 10px #a06fff); z-index: 2; }
 .btn-stars:hover .star-2, .btn-stars.selected .star-2 { top: -25%; left: 10%; width: 15px; filter: drop-shadow(0 0 10px #a06fff); z-index: 2; }
 .btn-stars:hover .star-3, .btn-stars.selected .star-3 { top: 55%; left: 25%; width: 5px; filter: drop-shadow(0 0 10px #a06fff); z-index: 2; }
@@ -429,7 +414,6 @@ body {
     fill: #a06fff;
 }
 
-/* --- ESTILOS PARA STRIKES --- */
 #strikes-container {
     text-align: center;
     font-size: 24px;
@@ -439,6 +423,6 @@ body {
 }
 
 #strikes-lbl {
-    color: #ff4e4e; /* Rojo brillante para las X */
-    letter-spacing: 5px; /* Espacio entre las X */
+    color: #ff4e4e;
+    letter-spacing: 5px;
 }
