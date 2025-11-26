@@ -8,10 +8,10 @@ Una versión moderna y rediseñada del clásico juego de Tetris, construida con 
 ## Características Principales
 
 * **Modo Clásico (1 Jugador):** Disfruta de la experiencia tradicional de Tetris. Completa líneas, acumula puntos y evita que los bloques lleguen a la cima.
-* **Modo Dúo (2 Jugadores - Asimétrico):** Una mecánica única donde la cooperación (o el caos) es clave:
+* **Modo Dúo (2 Jugadores ):** Una mecánica única donde la cooperación (o el caos) es clave:
     * **Jugador 1:** Controla el tablero de Tetris.
     * **Jugador 2:** Responde preguntas de cultura general.
-    * **Mecánica de Penalización:** ¡Cuidado! Si el Jugador 2 responde incorrectamente, se añade un **Strike** y la velocidad del Tetris aumenta drásticamente. Al llegar a **3 Strikes**, el juego termina.
+    * **Mecánica de Penalización:** ¡Cuidado! Si el Jugador 2 responde incorrectamente, se añade un **Strike** y la velocidad del Tetris aumenta drásticamente. Al llegar a **5 Strikes**, el juego termina.
     * **Asistencia:** El Jugador 2 puede ayudar moviendo la pieza del Jugador 1 con sus propias teclas ("A" y "B").
 * **Estilo Visual "Aurora":** Interfaz moderna con estética neón/cyberpunk, fondos animados, botones con efectos de estrellas y tipografía personalizada.
 * **Sistema de Pausa:** Menú de pausa integrado para detener la acción cuando lo necesites (Tecla `P`).
