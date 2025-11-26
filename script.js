@@ -14,6 +14,7 @@ window.onload = () => {
         ctx = canvas.getContext("2d"),
         gameOverModal = document.getElementById("game-over-modal"),
         pauseModal = document.getElementById("pause-modal");
+        gameWinModal = document.getElementById("game-win-modal"); // <-- NUEVO: Modal de Victoria
     
     const nextCanvas = document.getElementById("next-piece-canvas");
     const nextCtx = nextCanvas.getContext("2d");
@@ -152,7 +153,7 @@ window.onload = () => {
     let pauseSelectionIndex = 0;
     const pauseItems = [resumeButton, pauseMenuButton];
 
-
+/*preguntas*/
     const questions = [
         { q: "¿Qué patrón de diseño usa JavaScript para la herencia basada en prototipos?", options: ["Singleton", "Factory", "Prototype", "Observer"], correct: 2 },
 
@@ -286,13 +287,18 @@ window.onload = () => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
         
-        currentBaseDelay = Tetromino.DELAY; 
+        if (numPlayers === 2) {
+            currentBaseDelay = 150;
+        } else {
+            currentBaseDelay = Tetromino.DELAY;
+        }
+        
         delay = currentBaseDelay;
         score = 0;
         lines = 0;
         
         strikes = 0;
-        updateStrikesDisplay();
+        if (typeof updateStrikesDisplay === "function") updateStrikesDisplay();
 
         gameOverModal.style.display = "none";
         pauseModal.style.display = "none";
@@ -429,9 +435,11 @@ window.onload = () => {
     }
 
     function checkAnswer(selectedIndex, correctIndex) {
+        
         if (quizFeedback.className.includes('show')) {
             return;
         }
+
         const buttons = answerOptions.querySelectorAll('button');
         buttons.forEach(button => button.disabled = true);
 
@@ -454,10 +462,17 @@ window.onload = () => {
             
             if (strikes >= 3) {
                 triggerGameOver();
-            } else {
+            } 
+            else {
                 currentQuestionIndex++;
-                showNextQuestion();
+
+                if (currentQuestionIndex >= questions.length) {
+                    triggerGameOver();
+                } else {
+                    showNextQuestion();
+                }
             }
+            
         }, 1000); 
     }
 
