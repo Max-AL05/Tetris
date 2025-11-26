@@ -17,7 +17,7 @@ Una versión moderna y rediseñada del clásico juego de Tetris, construida con 
 * **Sistema de Pausa:** Menú de pausa integrado para detener la acción cuando lo necesites (Tecla `P`).
 * **Navegación Full Teclado:** Todo el juego, incluidos los menús, se puede controlar sin necesidad de usar el ratón.
 
-## 🚀 Controles
+## Controles
 
 ### General
 | Acción | Tecla |
