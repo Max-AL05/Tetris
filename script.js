@@ -155,45 +155,18 @@ window.onload = () => {
 
 /*preguntas*/
     const questions = [
-        { q: "¿Qué patrón de diseño usa JavaScript para la herencia basada en prototipos?", options: ["Singleton", "Factory", "Prototype", "Observer"], correct: 2 },
-
-        { q: "¿En qué contexto 'this' se refiere al objeto global en modo estricto?", options: ["En funciones globales", "En métodos de objeto", "En constructores", "Nunca en modo estricto"], correct: 3 },
-
-        { q: "¿Qué algoritmo usa Git para calcular diferencias entre archivos?", options: ["Myers diff", "Levenshtein", "Dijkstra", "Boyer-Moore"], correct: 0 },
-
-        { q: "¿Cuál es la complejidad temporal del algoritmo QuickSort en el peor caso?", options: ["O(n log n)", "O(n²)", "O(log n)", "O(n)"], correct: 1 },
-
-        { q: "¿Qué principio SOLID viola una clase que tiene múltiples responsabilidades?", options: ["Open/Closed", "Liskov Substitution", "Interface Segregation", "Single Responsibility"], correct: 3 },
-
-        { q: "¿Qué estructura de datos subyace a la implementación de async/await en JavaScript?", options: ["Cola de prioridades", "Pila de llamadas", "Promises", "Generadores"], correct: 3 },
-
-        { q: "¿En qué capa del modelo OSI opera el protocolo HTTP?", options: ["Capa de aplicación", "Capa de transporte", "Capa de sesión", "Capa de presentación"], correct: 0 },
-
-        { q: "¿Qué técnica de optimización evita recálculos mediante almacenamiento en caché?", options: ["Memoization", "Tabulation", "Dynamic Programming", "Greedy Algorithm"], correct: 0 },
-
-        { q: "¿Qué patrón resuelve el problema de herencia múltiple en lenguajes como Java?", options: ["Decorator", "Adapter", "Composite", "Interface"], correct: 0 },
-
-        { q: "¿Qué estructura utiliza React para el reconciliation algorithm?", options: ["DOM Virtual", "Árbol Rojo-Negro", "Grafos de dependencia", "Fibers"], correct: 3 },
-
-        { q: "¿Qué paradigma promueve la inmutabilidad como principio central?", options: ["Programación funcional", "Orientación a objetos", "Programación procedural", "Programación lógica"], correct: 0 },
-
-        { q: "¿Qué algoritmo de consenso usa Blockchain en Ethereum?", options: ["Proof of Work", "Proof of Stake", "Byzantine Fault Tolerance", "Raft"], correct: 1 },
-
-        { q: "¿Qué característica permite a un lenguaje manejar múltiples operaciones simultáneas?", options: ["Concurrencia", "Paralelismo", "Asincronía", "Multithreading"], correct: 0 },
-
-        { q: "¿Qué patrón de arquitectura separa responsabilidades en Modelo, Vista y Controlador?", options: ["MVC", "MVVM", "MVP", "Redux"], correct: 0 },
-
-        { q: "¿Qué protocolo proporciona comunicación cifrada segura en internet?", options: ["HTTPS", "HTTP/2", "WebSocket", "TCP/IP"], correct: 0 },
-
-        { q: "¿Qué estructura de datos es óptima para implementar una cola de prioridad?", options: ["Heap", "Árbol binario", "Lista enlazada", "Array"], correct: 0 },
-
-        { q: "¿Qué principio establece que 'las entidades deben estar abiertas para extensión pero cerradas para modificación'?", options: ["Open/Closed", "Liskov Substitution", "Dependency Inversion", "Interface Segregation"], correct: 0 },
-
-        { q: "¿Qué algoritmo garantiza exclusión mutua en programación concurrente?", options: ["Mutex", "Semáforo", "Monitor", "Todos los anteriores"], correct: 3 },
-
-        { q: "¿Qué tipo de sistema de tipos tiene TypeScript?", options: ["Estático y fuerte", "Dinámico y débil", "Estático y débil", "Dinámico y fuerte"], correct: 0 },
-
-        { q: "¿Qué patrón permite a un objeto notificar cambios a otros objetos?", options: ["Observer", "Publisher/Subscriber", "Mediator", "Todos los anteriores"], correct: 3 }
+        
+        { q: "¿Cuál es el río más largo del mundo?", options: ["Nilo", "Amazonas", "Misisipi", "Yangtsé"], correct: 1 },
+        { q: "¿Qué planeta del sistema solar es conocido como el 'planeta rojo'?", options: ["Venus", "Júpiter", "Marte", "Saturno"], correct: 2 },
+        { q: "¿Cuántos huesos tiene el cuerpo humano adulto?", options: ["206", "300", "150", "250"], correct: 0 },
+        { q: "¿Quién pintó 'La noche estrellada'?", options: ["Pablo Picasso", "Vincent van Gogh", "Claude Monet", "Salvador Dalí"], correct: 1 },
+        { q: "¿En qué país se encuentra la Gran Muralla?", options: ["Japón", "Corea del Sur", "China", "Tailandia"], correct: 2 },
+        { q: "¿Cuál es la capital de Australia?", options: ["Sídney", "Melbourne", "Canberra", "Brisbane"], correct: 2 },
+        { q: "¿Qué gas es esencial para la respiración de los seres humanos?", options: ["Dióxido de carbono", "Nitrógeno", "Oxígeno", "Hidrógeno"], correct: 2 },
+        { q: "¿Cuál de estos animales es un mamífero marino?", options: ["Tiburón", "Pulpo", "Delfín", "Medusa"], correct: 2 },
+        { q: "¿Qué continente es el más poblado del mundo?", options: ["África", "Europa", "Asia", "América"], correct: 2 },
+        { q: "¿Cuál es el resultado de 7² + 1?", options: ["48", "49", "50", "15"], correct: 2 }
+        
     ];
     let currentQuestionIndex = 0;
 
@@ -446,26 +419,34 @@ window.onload = () => {
         const isCorrect = (selectedIndex === correctIndex);
 
         if (isCorrect) {
+            // --- RESPUESTA CORRECTA ---
             quizFeedback.innerText = "¡Correcto!";
             quizFeedback.className = 'correct show'; 
+            // AQUÍ NO HACEMOS NADA MÁS (No se acelera)
         } else {
+            // --- RESPUESTA INCORRECTA ---
             quizFeedback.innerText = "¡Incorrecto!";
             quizFeedback.className = 'incorrect show'; 
             
+            // 1. Aumentamos Strike
             strikes++; 
             updateStrikesDisplay();
+
+            // 2. Aceleramos el Tetris (Solo aquí)
             speedUpTetris(); 
         }
         
         setTimeout(() => {
             quizFeedback.className = ''; 
             
+            // Verificamos si perdió por 5 strikes
             if (strikes >= 5) {
                 triggerGameOver();
             } 
             else {
                 currentQuestionIndex++;
 
+                // Verificamos si se acabaron las preguntas
                 if (currentQuestionIndex >= questions.length) {
                     triggerGameOver();
                 } else {
