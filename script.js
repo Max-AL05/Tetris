@@ -288,7 +288,7 @@ window.onload = () => {
         nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
         
         if (numPlayers === 2) {
-            currentBaseDelay = 150;
+            currentBaseDelay = 300;
         } else {
             currentBaseDelay = Tetromino.DELAY;
         }
@@ -460,7 +460,7 @@ window.onload = () => {
         setTimeout(() => {
             quizFeedback.className = ''; 
             
-            if (strikes >= 3) {
+            if (strikes >= 5) {
                 triggerGameOver();
             } 
             else {
