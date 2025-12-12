@@ -3,6 +3,7 @@ window.onload = () => {
     const menuContainer = document.getElementById("menu-container");
     const startButton = document.getElementById("start-button");
     
+    // Elementos para el nombre del jugador
     const playerNameInput = document.getElementById("player-name-input");
     const playerNameDisplay = document.getElementById("player-name-display");
 
@@ -25,9 +26,32 @@ window.onload = () => {
     const resumeButton = document.getElementById("resume-button");
     const pauseMenuButton = document.getElementById("pause-menu-button");
 
+    // --- CONFIGURACIÓN DE AUDIO ---
+    
+    // 1. Música del Juego
     const bgMusic = new Audio('audio/soundtrack.mp3'); 
-    bgMusic.loop = true;
+    bgMusic.loop = true;   
     bgMusic.volume = 0.5;
+
+    // 2. Música del Menú (NUEVO)
+    // Asegúrate de guardar el archivo como 'public/audio/menu.mp3'
+    const menuMusic = new Audio('audio/menu.mp3');
+    menuMusic.loop = true;
+    menuMusic.volume = 0.5;
+
+    // Intentar reproducir música del menú al cargar la página
+    // Nota: Los navegadores a veces bloquean esto hasta que haces clic en la página
+    menuMusic.play().catch(error => {
+        console.log("Esperando interacción del usuario para reproducir música del menú.");
+    });
+    
+    // Si el navegador bloqueó el autoplay, reproducir al hacer el primer clic en cualquier sitio
+    document.body.addEventListener('click', () => {
+        if (menuMusic.paused && menuContainer.style.display !== "none") {
+            menuMusic.play();
+        }
+    }, { once: true });
+
 
     class Tetromino {
         static COLORS = ["blue", "green", "yellow", "red", "orange", "purple"];
@@ -153,16 +177,22 @@ window.onload = () => {
         const name = playerNameInput.value.trim() || "Jugador";
         playerNameDisplay.innerText = name;
 
-        menuContainer.style.display = "none";
-        gameArea.style.display = "flex"; 
+        // --- CAMBIO DE MÚSICA ---
+        menuMusic.pause();
+        menuMusic.currentTime = 0;
         
         bgMusic.currentTime = 0;
-        bgMusic.play().catch(e => console.log("El navegador bloqueó el audio automático:", e));
+        bgMusic.play();
+        // ------------------------
+
+        menuContainer.style.display = "none";
+        gameArea.style.display = "flex"; 
         
         setup(); 
     };
 
     restartButton.onclick = () => {
+        // Reiniciar música del juego
         bgMusic.currentTime = 0;
         bgMusic.play();
         
@@ -171,8 +201,13 @@ window.onload = () => {
     };
 
     menuButton.onclick = () => {
+        // --- CAMBIO DE MÚSICA ---
         bgMusic.pause();
         bgMusic.currentTime = 0;
+        
+        menuMusic.currentTime = 0;
+        menuMusic.play();
+        // ------------------------
 
         reset(); 
         gameArea.style.display = "none"; 
@@ -190,13 +225,13 @@ window.onload = () => {
 
         if (isPaused) {
             pauseModal.style.display = "block";
-            bgMusic.pause();
+            bgMusic.pause(); // Pausar música juego
             
             pauseSelectionIndex = 0;
             updatePauseSelection();
         } else {
             pauseModal.style.display = "none"; 
-            bgMusic.play();
+            bgMusic.play(); // Reanudar música juego
             draw();
         }
     }
@@ -204,10 +239,15 @@ window.onload = () => {
     resumeButton.onclick = () => togglePause();
 
     pauseMenuButton.onclick = () => {
-        togglePause();
+        togglePause(); 
         
+        // --- CAMBIO DE MÚSICA ---
         bgMusic.pause();
         bgMusic.currentTime = 0;
+        
+        menuMusic.currentTime = 0;
+        menuMusic.play();
+        // ------------------------
 
         reset(); 
         gameArea.style.display = "none"; 
@@ -219,7 +259,8 @@ window.onload = () => {
     function triggerGameOver() {
         isGameOver = true;
         
-        bgMusic.pause();
+        bgMusic.pause(); // Parar música juego
+        // Aquí podrías poner un sonido de Game Over si quisieras
         
         saveScoreToBackend(); 
         
@@ -372,7 +413,7 @@ window.onload = () => {
                 startButton.click();
                 playerNameInput.blur();
             }
-            if (event.key !== "ArrowUp" && event.key !== "ArrowDown") {
+            if (event.key !== "ArrowUp" && event.key !== "ArrowDown" && event.key !== "w" && event.key !== "s") {
                 return; 
             }
         }
@@ -396,7 +437,7 @@ window.onload = () => {
                     updatePauseSelection();
                     handled = true;
                     break;
-                case " ":
+                case " ": case "q": case "Q": 
                     pauseItems[pauseSelectionIndex].click();
                     handled = true;
                     break;
@@ -407,7 +448,7 @@ window.onload = () => {
 
         if (menuContainer.style.display === "flex") {
             switch (event.key) {
-                case "ArrowUp":
+                case "ArrowUp": case "w": case "W":
                     menuSelectionIndex--;
                     if (menuSelectionIndex < 0) menuSelectionIndex = menuItems.length - 1;
                     updateMenuSelection();
