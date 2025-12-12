@@ -25,6 +25,10 @@ window.onload = () => {
     const resumeButton = document.getElementById("resume-button");
     const pauseMenuButton = document.getElementById("pause-menu-button");
 
+    const bgMusic = new Audio('audio/soundtrack.mp3'); 
+    bgMusic.loop = true;
+    bgMusic.volume = 0.5;
+
     class Tetromino {
         static COLORS = ["blue", "green", "yellow", "red", "orange", "purple"];
         static BLOCK_SIZE = 28;
@@ -151,15 +155,25 @@ window.onload = () => {
 
         menuContainer.style.display = "none";
         gameArea.style.display = "flex"; 
+        
+        bgMusic.currentTime = 0;
+        bgMusic.play().catch(e => console.log("El navegador bloqueó el audio automático:", e));
+        
         setup(); 
     };
 
     restartButton.onclick = () => {
+        bgMusic.currentTime = 0;
+        bgMusic.play();
+        
         reset(); 
         draw();
     };
 
     menuButton.onclick = () => {
+        bgMusic.pause();
+        bgMusic.currentTime = 0;
+
         reset(); 
         gameArea.style.display = "none"; 
         menuContainer.style.display = "flex";
@@ -168,7 +182,6 @@ window.onload = () => {
         menuSelectionIndex = 1;
         updateMenuSelection();
     };
-    
 
     function togglePause() {
         if (isGameOver || gameArea.style.display === "none") return;
@@ -177,10 +190,13 @@ window.onload = () => {
 
         if (isPaused) {
             pauseModal.style.display = "block";
+            bgMusic.pause();
+            
             pauseSelectionIndex = 0;
             updatePauseSelection();
         } else {
             pauseModal.style.display = "none"; 
+            bgMusic.play();
             draw();
         }
     }
@@ -189,6 +205,10 @@ window.onload = () => {
 
     pauseMenuButton.onclick = () => {
         togglePause();
+        
+        bgMusic.pause();
+        bgMusic.currentTime = 0;
+
         reset(); 
         gameArea.style.display = "none"; 
         menuContainer.style.display = "flex";
@@ -198,6 +218,8 @@ window.onload = () => {
 
     function triggerGameOver() {
         isGameOver = true;
+        
+        bgMusic.pause();
         
         saveScoreToBackend(); 
         
@@ -374,7 +396,7 @@ window.onload = () => {
                     updatePauseSelection();
                     handled = true;
                     break;
-                case " ": 
+                case " ":
                     pauseItems[pauseSelectionIndex].click();
                     handled = true;
                     break;
