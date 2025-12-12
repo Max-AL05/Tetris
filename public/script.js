@@ -2,9 +2,7 @@ window.onload = () => {
 
     const menuContainer = document.getElementById("menu-container");
     const startButton = document.getElementById("start-button");
-    const controlsButton = document.getElementById("controls-button");
     
-    // Elementos para el nombre del jugador
     const playerNameInput = document.getElementById("player-name-input");
     const playerNameDisplay = document.getElementById("player-name-display");
 
@@ -138,9 +136,8 @@ window.onload = () => {
         isPaused = false,
         currentBaseDelay;
     
-    // Actualizamos el índice de selección para incluir el input como primer elemento navegable
-    let menuSelectionIndex = 1; // Empezamos en el botón de Start
-    const menuItems = [playerNameInput, startButton, controlsButton]; 
+    let menuSelectionIndex = 1; 
+    const menuItems = [playerNameInput, startButton]; 
     
     let gameOverSelectionIndex = 0; 
     const gameOverItems = [restartButton, menuButton];
@@ -149,7 +146,6 @@ window.onload = () => {
     const pauseItems = [resumeButton, pauseMenuButton];
 
     startButton.onclick = () => {
-        // Capturar nombre
         const name = playerNameInput.value.trim() || "Jugador";
         playerNameDisplay.innerText = name;
 
@@ -168,15 +164,11 @@ window.onload = () => {
         gameArea.style.display = "none"; 
         menuContainer.style.display = "flex";
         
-        // Resetear input y selección
         playerNameInput.value = "";
         menuSelectionIndex = 1;
         updateMenuSelection();
     };
     
-    controlsButton.onclick = () => {
-        window.location.href = 'controles.html';
-    };
 
     function togglePause() {
         if (isGameOver || gameArea.style.display === "none") return;
@@ -207,7 +199,6 @@ window.onload = () => {
     function triggerGameOver() {
         isGameOver = true;
         
-        // Llamada a la API
         saveScoreToBackend(); 
         
         gameOverModal.style.display = "block";
@@ -327,7 +318,6 @@ window.onload = () => {
 
     function updateMenuSelection() {
         menuItems.forEach((item, index) => {
-            // Si es el input, le damos foco
             if (item.tagName === "INPUT") {
                 if (index === menuSelectionIndex) item.focus();
                 else item.blur();
@@ -355,14 +345,12 @@ window.onload = () => {
     window.onkeydown = event => {
         let handled = false; 
         
-        // Si estamos escribiendo en el input, no queremos mover la selección con W/S
         if (document.activeElement === playerNameInput) {
             if (event.key === "Enter") {
                 startButton.click();
                 playerNameInput.blur();
             }
-            // Permitimos flechas arriba/abajo para salir del input
-            if (event.key !== "ArrowUp" && event.key !== "ArrowDown" && event.key !== "w" && event.key !== "s") {
+            if (event.key !== "ArrowUp" && event.key !== "ArrowDown") {
                 return; 
             }
         }
@@ -386,7 +374,7 @@ window.onload = () => {
                     updatePauseSelection();
                     handled = true;
                     break;
-                case " ": case "q": case "Q": 
+                case " ": 
                     pauseItems[pauseSelectionIndex].click();
                     handled = true;
                     break;
@@ -397,7 +385,7 @@ window.onload = () => {
 
         if (menuContainer.style.display === "flex") {
             switch (event.key) {
-                case "ArrowUp": case "w": case "W":
+                case "ArrowUp":
                     menuSelectionIndex--;
                     if (menuSelectionIndex < 0) menuSelectionIndex = menuItems.length - 1;
                     updateMenuSelection();
@@ -472,39 +460,24 @@ window.onload = () => {
     
     updateMenuSelection();
 
-    // FUNCIÓN NUEVA: Enviar puntuación al backend
     function saveScoreToBackend() {
-        // Obtener el nombre limpio (quitando "Jugador: ")
         let playerName = document.getElementById("player-name-display").innerText;
         playerName = playerName.replace("Jugador: ", "").trim();
         
-        // Si no puso nombre, usar "Anónimo"
         if (!playerName) playerName = "Anónimo";
 
         const currentScore = parseInt(document.getElementById("score").innerText) || 0;
         const currentLines = parseInt(document.getElementById("lines").innerText) || 0;
 
-        // Solo guardar si hay puntuación mayor a 0
         if (currentScore > 0) {
             fetch('/api/scores', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ 
-                    name: playerName, 
-                    score: currentScore, 
-                    lines: currentLines 
-                }),
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: playerName, score: currentScore, lines: currentLines }),
             })
             .then(response => response.json())
-            .then(data => {
-                console.log('Puntuación guardada con éxito:', data);
-                // Aquí podrías llamar a una función para actualizar una tabla de líderes si quisieras
-            })
-            .catch((error) => {
-                console.error('Error al guardar puntuación:', error);
-            });
+            .then(data => console.log('Puntuación guardada:', data))
+            .catch((error) => console.error('Error al guardar:', error));
         }
     }
 }
