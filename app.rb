@@ -11,10 +11,10 @@ end
 
 if !ActiveRecord::Base.connection.table_exists?(:scores)
   ActiveRecord::Base.connection.create_table :scores do |t|
-    t.string :name
-    t.integer :score
-    t.integer :lines
-    t.timestamps
+    t.string :Nombre
+    t.integer :Puntaje
+    t.integer :Lineas
+    #t.timestamps
   end
 end
 
@@ -32,9 +32,9 @@ post '/api/scores' do
   data = JSON.parse(request.body.read)
   
   new_score = Score.create(
-    name: data['name'],
-    score: data['score'],
-    lines: data['lines']
+    Nombre: data['name'],
+    Puntaje: data['score'],
+    Lineas: data['lines']
   )
   
   if new_score.persisted?
