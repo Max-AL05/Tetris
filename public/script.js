@@ -24,7 +24,9 @@ window.onload = () => {
 
     const resumeButton = document.getElementById("resume-button");
     const pauseMenuButton = document.getElementById("pause-menu-button");
-    
+
+    const statsListContainer = document.getElementById("stats-list");
+
     const bgMusic = new Audio('audio/soundtrack.mp3'); 
     bgMusic.loop = true;   
     bgMusic.volume = 0.4;
@@ -34,7 +36,7 @@ window.onload = () => {
     menuMusic.volume = 0.5;
 
     const gameOverMusic = new Audio('audio/gameover.mp3');
-    gameOverMusic.loop = true;
+    gameOverMusic.loop = true; 
     gameOverMusic.volume = 0.6;
 
     menuMusic.play().catch(error => {
@@ -54,10 +56,11 @@ window.onload = () => {
         static DELAY = 400;
         static DELAY_INCREASED = 5;
 
-        constructor(xs, ys, color = null) {
+        constructor(xs, ys, color = null, typeId = -1) {
             this.x = xs;
             this.y = ys;
             this.length = xs.length;
+            this.typeId = typeId;
             if (color !== null) {
                 this.color = color;
                 this.img = new Image();
@@ -80,18 +83,18 @@ window.onload = () => {
             this.draw();
         }
 
-        draw(targetCtx = ctx, offsetX = 0, offsetY = 0) {
+        draw(targetCtx = ctx, offsetX = 0, offsetY = 0, blockSize = Tetromino.BLOCK_SIZE) {
             if (!this.img.complete) {
-                this.img.onload = () => this.draw(targetCtx, offsetX, offsetY);
+                this.img.onload = () => this.draw(targetCtx, offsetX, offsetY, blockSize);
                 return;
             }
             for (let i = 0; i < this.length; ++i) {
                 targetCtx.drawImage(
                     this.img,
-                    (this.x[i] + offsetX) * Tetromino.BLOCK_SIZE,
-                    (this.y[i] + offsetY) * Tetromino.BLOCK_SIZE,
-                    Tetromino.BLOCK_SIZE,
-                    Tetromino.BLOCK_SIZE
+                    (this.x[i] + offsetX) * blockSize,
+                    (this.y[i] + offsetY) * blockSize,
+                    blockSize,
+                    blockSize
                 );
             }
         }
@@ -140,14 +143,15 @@ window.onload = () => {
         NEXT_CANVAS_WIDTH = 4,
         NEXT_CANVAS_HEIGHT = 4,
         
-        TETROMINOES = [
-            new Tetromino([0, 0, 0, 0], [0, 1, 2, 3]), // I
-            new Tetromino([0, 0, 1, 1], [0, 1, 0, 1]), // O
-            new Tetromino([0, 1, 1, 1], [0, 0, 1, 2]), // L
-            new Tetromino([0, 0, 0, 1], [0, 1, 2, 0]), // J
-            new Tetromino([0, 1, 1, 2], [0, 0, 1, 1]), // S
-            new Tetromino([0, 1, 1, 2], [1, 1, 0, 1]), // T
-            new Tetromino([0, 1, 1, 2], [1, 1, 0, 0])  // Z
+        // Definición base de piezas
+        TETROMINOES_DEF = [
+            { x: [0, 0, 0, 0], y: [0, 1, 2, 3], colorIdx: 0 }, // I - Azul
+            { x: [0, 0, 1, 1], y: [0, 1, 0, 1], colorIdx: 2 }, // O - Amarillo
+            { x: [0, 1, 1, 1], y: [0, 0, 1, 2], colorIdx: 4 }, // L - Naranja
+            { x: [0, 0, 0, 1], y: [0, 1, 2, 0], colorIdx: 0 }, // J - Azul (repite)
+            { x: [0, 1, 1, 2], y: [0, 0, 1, 1], colorIdx: 1 }, // S - Verde
+            { x: [0, 1, 1, 2], y: [1, 1, 0, 1], colorIdx: 5 }, // T - Morado
+            { x: [0, 1, 1, 2], y: [1, 1, 0, 0], colorIdx: 3 }  // Z - Rojo
         ];
 
     let tetromino = null,
@@ -157,7 +161,8 @@ window.onload = () => {
         lines,
         isGameOver = false,
         isPaused = false,
-        currentBaseDelay;
+        currentBaseDelay,
+        pieceCounts = Array(7).fill(0);
     
     let menuSelectionIndex = 1; 
     const menuItems = [playerNameInput, startButton]; 
@@ -167,6 +172,62 @@ window.onload = () => {
     
     let pauseSelectionIndex = 0;
     const pauseItems = [resumeButton, pauseMenuButton];
+
+
+    function initStats() {
+        statsListContainer.innerHTML = "";
+        pieceCounts = Array(7).fill(0);
+
+        TETROMINOES_DEF.forEach((def, idx) => {
+            const row = document.createElement("div");
+            row.className = "stat-item";
+            
+            const cvs = document.createElement("canvas");
+            cvs.width = 80;
+            cvs.height = 40;
+            cvs.className = "stat-canvas";
+            
+            const countTxt = document.createElement("span");
+            countTxt.id = `stat-count-${idx}`;
+            countTxt.className = "stat-count";
+            countTxt.innerText = "0";
+
+            row.appendChild(cvs);
+            row.appendChild(countTxt);
+            statsListContainer.appendChild(row);
+
+            drawStatPiece(cvs, idx);
+        });
+    }
+
+    function drawStatPiece(cvs, typeIdx) {
+        const ctxS = cvs.getContext("2d");
+        const def = TETROMINOES_DEF[typeIdx];
+        const miniBlock = 18; 
+        
+        const tempPiece = new Tetromino([...def.x], [...def.y], def.colorIdx, typeIdx);
+        
+        const minX = Math.min(...tempPiece.x);
+        const maxX = Math.max(...tempPiece.x);
+        const minY = Math.min(...tempPiece.y);
+        const maxY = Math.max(...tempPiece.y);
+        
+        const w = (maxX - minX + 1) * miniBlock;
+        const h = (maxY - minY + 1) * miniBlock;
+        
+        const offX = (cvs.width - w) / 2 / miniBlock - minX;
+        const offY = (cvs.height - h) / 2 / miniBlock - minY;
+
+        tempPiece.draw(ctxS, offX, offY, miniBlock);
+    }
+
+    function updateStatCount(typeIdx) {
+        if (typeIdx >= 0 && typeIdx < pieceCounts.length) {
+            pieceCounts[typeIdx]++;
+            const el = document.getElementById(`stat-count-${typeIdx}`);
+            if (el) el.innerText = pieceCounts[typeIdx];
+        }
+    }
 
     startButton.onclick = () => {
         const name = playerNameInput.value.trim() || "Jugador";
@@ -236,13 +297,10 @@ window.onload = () => {
 
     pauseMenuButton.onclick = () => {
         togglePause(); 
-        
         bgMusic.pause();
         bgMusic.currentTime = 0;
-        
         menuMusic.currentTime = 0;
         menuMusic.play();
-
         reset(); 
         gameArea.style.display = "none"; 
         menuContainer.style.display = "flex";
@@ -252,15 +310,11 @@ window.onload = () => {
 
     function triggerGameOver() {
         isGameOver = true;
-        
         bgMusic.pause();
         bgMusic.currentTime = 0;
-        
         gameOverMusic.currentTime = 0;
         gameOverMusic.play();
-        
         saveScoreToBackend(); 
-        
         gameOverModal.style.display = "block";
         gameOverSelectionIndex = 0;
         updateGameOverSelection();
@@ -275,6 +329,7 @@ window.onload = () => {
         nextCanvas.width = NEXT_CANVAS_WIDTH * Tetromino.BLOCK_SIZE;
         nextCanvas.height = NEXT_CANVAS_HEIGHT * Tetromino.BLOCK_SIZE;
 
+        initStats();
         reset();
         draw();
     }
@@ -293,6 +348,8 @@ window.onload = () => {
         pauseModal.style.display = "none";
         isGameOver = false;
         isPaused = false;
+        
+        initStats();
 
         nextTetromino = generateNewTetromino();
         tetromino = null;
@@ -347,14 +404,18 @@ window.onload = () => {
     }
 
     function generateNewTetromino() {
-        const randIndex = Math.floor(Math.random() * TETROMINOES.length);
+        const randIndex = Math.floor(Math.random() * TETROMINOES_DEF.length);
         const randColor = Math.floor(Math.random() * Tetromino.COLORS.length);
-        const piece = TETROMINOES[randIndex];
-        return new Tetromino([...piece.x], [...piece.y], randColor);
+        const piece = TETROMINOES_DEF[randIndex];
+        
+        return new Tetromino([...piece.x], [...piece.y], randColor, randIndex);
     }
 
     function spawnNewTetromino() {
         tetromino = nextTetromino; 
+        
+        updateStatCount(tetromino.typeId);
+
         nextTetromino = generateNewTetromino(); 
         const middle = Math.floor(FIELD_WIDTH / 2);
         tetromino.x = tetromino.x.map(x => x + middle);
