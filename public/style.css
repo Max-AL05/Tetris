@@ -1,18 +1,18 @@
 body {
     margin: 0;
     padding: 0;
-    
+
     background: #020024;
     background: linear-gradient(0deg, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 50%, rgba(204, 0, 255, 1) 100%);
-    
+
     display: flex;
     align-items: center;
     justify-content: center;
-    
+
     height: 100vh;
     width: 100vw;
-    overflow: hidden; 
-    
+    overflow: hidden;
+
     text-align: center;
     color: white;
     font-family: "Zain", sans-serif;
@@ -23,9 +23,9 @@ body {
     background: #1a052e;
     font-size: 20px;
     font-weight: bold;
-    font-family: 'Zain', sans-serif; 
-    color: #a06fff; 
-    border: 2px solid #5d3a9b; 
+    font-family: 'Zain', sans-serif;
+    color: #a06fff;
+    border: 2px solid #5d3a9b;
     border-radius: 10px;
     box-shadow: 0 0 5px #a06fff;
     text-align: center;
@@ -52,25 +52,27 @@ body {
     gap: 20px;
 }
 
-#left-div, #right-div {
+#left-div,
+#right-div {
     display: inline-block;
     vertical-align: top;
     padding: 20px;
     width: 250px;
     height: 616px;
 
-    background-color: rgba(0, 0, 0, 0.8); 
-    border: 2px solid #5d3a9b; 
-    border-radius: 10px;          
+    background-color: rgba(0, 0, 0, 0.8);
+    border: 2px solid #5d3a9b;
+    border-radius: 10px;
     box-shadow: 0 0 15px #a06fff;
-    box-sizing: border-box; 
+    box-sizing: border-box;
 }
 
-#left-div hr, #right-div hr {
+#left-div hr,
+#right-div hr {
     border: none;
     height: 2px;
     background-color: #5d3a9b;
-    box-shadow: 0 0 5px #8a4fff; 
+    box-shadow: 0 0 5px #8a4fff;
     margin: 15px 0;
 }
 
@@ -82,26 +84,28 @@ body {
 #game-container {
     position: relative;
     display: inline-block;
-    width: 310px; 
+    width: 310px;
     height: 616px;
 
-    background-color: rgba(0, 0, 0, 0.6); 
+    background-color: rgba(0, 0, 0, 0.6);
     border: 4px solid #5d3a9b;
     padding-bottom: 10px;
     border-radius: 10px;
     box-shadow: 0 0 15px #a06fff;
-    box-sizing: border-box; 
+    box-sizing: border-box;
 }
 
 #game-canvas {
     height: 580px;
     width: 280px;
     position: absolute;
-    top: 14px; 
+    top: 14px;
     left: 14px;
 }
 
-#score-div, #lines-div, #player-name-div {
+#score-div,
+#lines-div,
+#player-name-div {
     color: white;
     font-size: 23px;
     font-weight: bold;
@@ -125,7 +129,8 @@ body {
     font-family: "Zain", sans-serif;
 }
 
-#next-piece-container h4, #right-div h3 {
+#next-piece-container h4,
+#right-div h3 {
     margin: 0 0 10px 0;
     font-size: 22px;
     font-weight: bold;
@@ -134,7 +139,7 @@ body {
 }
 
 #next-piece-canvas {
-    background-color: rgba(0, 0, 0, 0.4); 
+    background-color: rgba(0, 0, 0, 0.4);
     border: 2px solid #5d3a9b;
     border-radius: 5px;
     box-shadow: 0 0 5px #a06fff;
@@ -173,7 +178,7 @@ body {
 }
 
 #menu-container {
-    display: flex; 
+    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -181,29 +186,31 @@ body {
 }
 
 #logo-menu {
-    width: 250px; 
+    width: 250px;
     margin-bottom: 30px;
 }
 
-#game-over-modal, #pause-modal {
-    display: none; 
+#game-over-modal,
+#pause-modal {
+    display: none;
     position: fixed;
     top: 50%;
-    left: 50%;     
+    left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 1000;   
+    z-index: 1000;
 
     background-color: #1a052e;
     border: 2px solid #5d3a9b;
     border-radius: 10px;
     box-shadow: 0 0 15px #a06fff, 0 0 5px #a06fff inset;
-    
+
     padding: 25px;
     text-align: center;
     min-width: 300px;
 }
 
-#game-over-modal h2, #pause-modal h2 {
+#game-over-modal h2,
+#pause-modal h2 {
     font-size: 26px;
     font-weight: bold;
     font-family: "Zain", sans-serif;
@@ -214,8 +221,8 @@ body {
 
 #game-over-modal .modal-button-container,
 #pause-modal .modal-button-container {
-    display: flex; 
-    justify-content: center; 
+    display: flex;
+    justify-content: center;
     gap: 15px;
 }
 
@@ -225,9 +232,9 @@ body {
     background: #1a052e;
     font-size: 18px;
     font-weight: bold;
-    font-family: 'Zain', sans-serif; 
-    color: #ffffff; 
-    border: 2px solid #5d3a9b; 
+    font-family: 'Zain', sans-serif;
+    color: #ffffff;
+    border: 2px solid #5d3a9b;
     border-radius: 10px;
     box-shadow: 0 0 5px #a06fff;
     transition: all 0.3s ease-in-out;
@@ -238,7 +245,8 @@ body {
     overflow: hidden;
 }
 
-.btn-stars:hover, .btn-stars.selected {
+.btn-stars:hover,
+.btn-stars.selected {
     background: rgba(93, 58, 155, 0.3);
     color: #a06fff;
     border-color: #a06fff;
@@ -249,4 +257,89 @@ body {
 .btn-stars:active {
     transform: scale(0.95);
     box-shadow: 0 0 10px #a06fff;
+}
+
+/* --- ESTILOS PARA LA PANTALLA DE PUNTUACIONES --- */
+
+#scores-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.85);
+    padding: 30px;
+    border: 3px solid #5d3a9b;
+    border-radius: 15px;
+    box-shadow: 0 0 20px #a06fff;
+    width: 500px;
+    max-width: 90vw;
+}
+
+#logo-scores {
+    width: 150px;
+    margin-bottom: 10px;
+}
+
+#scores-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-family: 'Zain', sans-serif;
+    font-size: 22px;
+}
+
+#scores-table th {
+    border-bottom: 2px solid #5d3a9b;
+    color: #a06fff;
+    padding: 10px;
+    text-transform: uppercase;
+}
+
+#scores-table td {
+    padding: 8px;
+    border-bottom: 1px solid rgba(93, 58, 155, 0.3);
+}
+
+/* Colores para los ganadores */
+.rank-1 {
+    color: #ffd700;
+    text-shadow: 0 0 5px #ffd700;
+    font-weight: bold;
+    font-size: 24px;
+}
+
+/* Oro */
+.rank-2 {
+    color: #c0c0c0;
+    text-shadow: 0 0 5px #c0c0c0;
+    font-weight: bold;
+}
+
+/* Plata */
+.rank-3 {
+    color: #cd7f32;
+    text-shadow: 0 0 5px #cd7f32;
+    font-weight: bold;
+}
+
+/* Bronce */
+
+#loading-text {
+    font-size: 24px;
+    margin: 20px;
+    color: #a06fff;
+    animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+    0% {
+        opacity: 0.3;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.3;
+    }
 }

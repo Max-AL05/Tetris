@@ -2,12 +2,12 @@ window.onload = () => {
 
     const menuContainer = document.getElementById("menu-container");
     const startButton = document.getElementById("start-button");
-    
+    const scoresButton = document.getElementById("scores-button"); // <--- NUEVO
     const playerNameInput = document.getElementById("player-name-input");
     const playerNameDisplay = document.getElementById("player-name-display");
 
-    const gameArea = document.getElementById("game-area"); 
-    
+    const gameArea = document.getElementById("game-area");
+
     const
         scoreLbl = document.getElementById("score"),
         linesLbl = document.getElementById("lines"),
@@ -15,10 +15,10 @@ window.onload = () => {
         ctx = canvas.getContext("2d"),
         gameOverModal = document.getElementById("game-over-modal"),
         pauseModal = document.getElementById("pause-modal");
-    
+
     const nextCanvas = document.getElementById("next-piece-canvas");
     const nextCtx = nextCanvas.getContext("2d");
-    
+
     const restartButton = document.getElementById("restart-button");
     const menuButton = document.getElementById("menu-button");
 
@@ -27,8 +27,8 @@ window.onload = () => {
 
     const statsListContainer = document.getElementById("stats-list");
 
-    const bgMusic = new Audio('audio/soundtrack.mp3'); 
-    bgMusic.loop = true;   
+    const bgMusic = new Audio('audio/soundtrack.mp3');
+    bgMusic.loop = true;
     bgMusic.volume = 0.4;
 
     const menuMusic = new Audio('audio/menu.mp3');
@@ -36,13 +36,13 @@ window.onload = () => {
     menuMusic.volume = 0.5;
 
     const gameOverMusic = new Audio('audio/gameover.mp3');
-    gameOverMusic.loop = true; 
+    gameOverMusic.loop = true;
     gameOverMusic.volume = 0.6;
 
     menuMusic.play().catch(error => {
         console.log("Esperando interacción para audio...");
     });
-    
+
     document.body.addEventListener('click', () => {
         if (menuMusic.paused && menuContainer.style.display !== "none") {
             menuMusic.play();
@@ -123,10 +123,10 @@ window.onload = () => {
                 ny = [];
 
             if (!this.collides(i => {
-                    nx.push(maxX + minY - tetromino.y[i]);
-                    ny.push(tetromino.x[i] - minX + minY);
-                    return { x: nx[i], y: ny[i] };
-                })) {
+                nx.push(maxX + minY - tetromino.y[i]);
+                ny.push(tetromino.x[i] - minX + minY);
+                return { x: nx[i], y: ny[i] };
+            })) {
                 this.update(i => {
                     this.x[i] = nx[i];
                     this.y[i] = ny[i];
@@ -142,7 +142,7 @@ window.onload = () => {
         MIN_VALID_ROW = 4,
         NEXT_CANVAS_WIDTH = 4,
         NEXT_CANVAS_HEIGHT = 4,
-        
+
         // Definición base de piezas
         TETROMINOES_DEF = [
             { x: [0, 0, 0, 0], y: [0, 1, 2, 3], colorIdx: 0 }, // I - Azul
@@ -163,13 +163,13 @@ window.onload = () => {
         isPaused = false,
         currentBaseDelay,
         pieceCounts = Array(7).fill(0);
-    
-    let menuSelectionIndex = 1; 
-    const menuItems = [playerNameInput, startButton]; 
-    
-    let gameOverSelectionIndex = 0; 
+
+    let menuSelectionIndex = 1;
+    const menuItems = [playerNameInput, startButton, scoresButton]; // <--- AÑADIDO scoresButton
+
+    let gameOverSelectionIndex = 0;
     const gameOverItems = [restartButton, menuButton];
-    
+
     let pauseSelectionIndex = 0;
     const pauseItems = [resumeButton, pauseMenuButton];
 
@@ -181,12 +181,12 @@ window.onload = () => {
         TETROMINOES_DEF.forEach((def, idx) => {
             const row = document.createElement("div");
             row.className = "stat-item";
-            
+
             const cvs = document.createElement("canvas");
             cvs.width = 80;
             cvs.height = 40;
             cvs.className = "stat-canvas";
-            
+
             const countTxt = document.createElement("span");
             countTxt.id = `stat-count-${idx}`;
             countTxt.className = "stat-count";
@@ -203,18 +203,18 @@ window.onload = () => {
     function drawStatPiece(cvs, typeIdx) {
         const ctxS = cvs.getContext("2d");
         const def = TETROMINOES_DEF[typeIdx];
-        const miniBlock = 18; 
-        
+        const miniBlock = 18;
+
         const tempPiece = new Tetromino([...def.x], [...def.y], def.colorIdx, typeIdx);
-        
+
         const minX = Math.min(...tempPiece.x);
         const maxX = Math.max(...tempPiece.x);
         const minY = Math.min(...tempPiece.y);
         const maxY = Math.max(...tempPiece.y);
-        
+
         const w = (maxX - minX + 1) * miniBlock;
         const h = (maxY - minY + 1) * miniBlock;
-        
+
         const offX = (cvs.width - w) / 2 / miniBlock - minX;
         const offY = (cvs.height - h) / 2 / miniBlock - minY;
 
@@ -235,41 +235,45 @@ window.onload = () => {
 
         menuMusic.pause();
         menuMusic.currentTime = 0;
-        
+
         bgMusic.currentTime = 0;
         bgMusic.play();
 
         menuContainer.style.display = "none";
-        gameArea.style.display = "flex"; 
-        
-        setup(); 
+        gameArea.style.display = "flex";
+
+        setup();
+    };
+
+    scoresButton.onclick = () => {
+        window.location.href = 'puntuaciones.html';
     };
 
     restartButton.onclick = () => {
         gameOverMusic.pause();
         gameOverMusic.currentTime = 0;
-        
+
         bgMusic.currentTime = 0;
         bgMusic.play();
-        
-        reset(); 
+
+        reset();
         draw();
     };
 
     menuButton.onclick = () => {
         bgMusic.pause();
         bgMusic.currentTime = 0;
-        
+
         gameOverMusic.pause();
         gameOverMusic.currentTime = 0;
-        
+
         menuMusic.currentTime = 0;
         menuMusic.play();
 
-        reset(); 
-        gameArea.style.display = "none"; 
+        reset();
+        gameArea.style.display = "none";
         menuContainer.style.display = "flex";
-        
+
         playerNameInput.value = "";
         menuSelectionIndex = 1;
         updateMenuSelection();
@@ -282,13 +286,13 @@ window.onload = () => {
 
         if (isPaused) {
             pauseModal.style.display = "block";
-            bgMusic.pause(); 
-            
+            bgMusic.pause();
+
             pauseSelectionIndex = 0;
             updatePauseSelection();
         } else {
-            pauseModal.style.display = "none"; 
-            bgMusic.play(); 
+            pauseModal.style.display = "none";
+            bgMusic.play();
             draw();
         }
     }
@@ -296,13 +300,13 @@ window.onload = () => {
     resumeButton.onclick = () => togglePause();
 
     pauseMenuButton.onclick = () => {
-        togglePause(); 
+        togglePause();
         bgMusic.pause();
         bgMusic.currentTime = 0;
         menuMusic.currentTime = 0;
         menuMusic.play();
-        reset(); 
-        gameArea.style.display = "none"; 
+        reset();
+        gameArea.style.display = "none";
         menuContainer.style.display = "flex";
         menuSelectionIndex = 1;
         updateMenuSelection();
@@ -314,7 +318,7 @@ window.onload = () => {
         bgMusic.currentTime = 0;
         gameOverMusic.currentTime = 0;
         gameOverMusic.play();
-        saveScoreToBackend(); 
+        saveScoreToBackend();
         gameOverModal.style.display = "block";
         gameOverSelectionIndex = 0;
         updateGameOverSelection();
@@ -338,7 +342,7 @@ window.onload = () => {
         FIELD.forEach((_, y) => FIELD[y] = Array.from({ length: FIELD_WIDTH }).map(_ => false));
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
-        
+
         currentBaseDelay = Tetromino.DELAY;
         delay = currentBaseDelay;
         score = 0;
@@ -348,7 +352,7 @@ window.onload = () => {
         pauseModal.style.display = "none";
         isGameOver = false;
         isPaused = false;
-        
+
         initStats();
 
         nextTetromino = generateNewTetromino();
@@ -407,20 +411,20 @@ window.onload = () => {
         const randIndex = Math.floor(Math.random() * TETROMINOES_DEF.length);
         const randColor = Math.floor(Math.random() * Tetromino.COLORS.length);
         const piece = TETROMINOES_DEF[randIndex];
-        
+
         return new Tetromino([...piece.x], [...piece.y], randColor, randIndex);
     }
 
     function spawnNewTetromino() {
-        tetromino = nextTetromino; 
-        
+        tetromino = nextTetromino;
+
         updateStatCount(tetromino.typeId);
 
-        nextTetromino = generateNewTetromino(); 
+        nextTetromino = generateNewTetromino();
         const middle = Math.floor(FIELD_WIDTH / 2);
         tetromino.x = tetromino.x.map(x => x + middle);
         tetromino.draw(ctx, 0, 0);
-        drawNextPiece(); 
+        drawNextPiece();
     }
 
     function drawNextPiece() {
@@ -448,7 +452,7 @@ window.onload = () => {
             }
         });
     }
-    
+
     function updateGameOverSelection() {
         gameOverItems.forEach((button, index) => {
             if (index === gameOverSelectionIndex) button.classList.add('selected');
@@ -464,15 +468,15 @@ window.onload = () => {
     }
 
     window.onkeydown = event => {
-        let handled = false; 
-        
+        let handled = false;
+
         if (document.activeElement === playerNameInput) {
             if (event.key === "Enter") {
                 startButton.click();
                 playerNameInput.blur();
             }
             if (event.key !== "ArrowUp" && event.key !== "ArrowDown") {
-                return; 
+                return;
             }
         }
 
@@ -482,7 +486,7 @@ window.onload = () => {
         }
 
         if (isPaused) {
-             switch (event.key) {
+            switch (event.key) {
                 case "ArrowLeft":
                     pauseSelectionIndex--;
                     if (pauseSelectionIndex < 0) pauseSelectionIndex = pauseItems.length - 1;
@@ -501,7 +505,7 @@ window.onload = () => {
                     break;
             }
             if (handled) event.preventDefault();
-            return; 
+            return;
         }
 
         if (menuContainer.style.display === "flex") {
@@ -526,9 +530,9 @@ window.onload = () => {
                     break;
             }
         }
-        
+
         else if (isGameOver) {
-             switch (event.key) {
+            switch (event.key) {
                 case "ArrowLeft":
                     gameOverSelectionIndex--;
                     if (gameOverSelectionIndex < 0) gameOverSelectionIndex = gameOverItems.length - 1;
@@ -561,30 +565,30 @@ window.onload = () => {
                     handled = true;
                     break;
                 case "ArrowDown":
-                    delay = currentBaseDelay / Tetromino.DELAY_INCREASED; 
+                    delay = currentBaseDelay / Tetromino.DELAY_INCREASED;
                     handled = true;
                     break;
-                case " ": 
+                case " ":
                     tetromino.rotate();
                     handled = true;
                     break;
             }
         }
-        
+
         if (handled) event.preventDefault();
     }
-    
+
     window.onkeyup = event => {
         if (isGameOver || gameArea.style.display === "none" || isPaused) return;
-        if (event.key === "ArrowDown") delay = currentBaseDelay; 
+        if (event.key === "ArrowDown") delay = currentBaseDelay;
     }
-    
+
     updateMenuSelection();
 
     function saveScoreToBackend() {
         let playerName = document.getElementById("player-name-display").innerText;
         playerName = playerName.replace("Jugador: ", "").trim();
-        
+
         if (!playerName) playerName = "Anónimo";
 
         const currentScore = parseInt(document.getElementById("score").innerText) || 0;
@@ -596,9 +600,9 @@ window.onload = () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: playerName, score: currentScore, lines: currentLines }),
             })
-            .then(response => response.json())
-            .then(data => console.log('Puntuación guardada:', data))
-            .catch((error) => console.error('Error al guardar:', error));
+                .then(response => response.json())
+                .then(data => console.log('Puntuación guardada:', data))
+                .catch((error) => console.error('Error al guardar:', error));
         }
     }
 }

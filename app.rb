@@ -18,14 +18,17 @@ if !ActiveRecord::Base.connection.table_exists?(:scores)
   end
 end
 
+# En app.rb
+get '/api/scores' do
+  # CORREGIDO: Usamos 'Puntaje' con mayúscula, tal como está en la base de datos
+  top_scores = Score.order(Puntaje: :desc).limit(10)
+  json top_scores
+end
+
 get '/' do
   send_file File.join(settings.public_folder, 'index.html')
 end
 
-get '/api/scores' do
-  top_scores = Score.order(score: :desc).limit(10)
-  json top_scores
-end
 
 post '/api/scores' do
 

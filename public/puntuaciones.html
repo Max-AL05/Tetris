@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Puntuaciones - Tetris</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="imagenes/logo.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Zain:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <div id="scores-container">
+        <img src="imagenes/logo.png" id="logo-scores">
+        <h2>Mejores Puntuaciones</h2>
+
+        <div id="loading-text">Cargando...</div>
+        <table id="scores-table" style="display: none;">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nombre</th>
+                    <th>Puntos</th>
+                    <th>Líneas</th>
+                </tr>
+            </thead>
+            <tbody id="scores-body">
+            </tbody>
+        </table>
+
+        <br>
+        <button id="back-button" class="btn-stars" onclick="window.location.href='index.html'">
+            Volver al Menú
+        </button>
+    </div>
+
+    <script src="scores.js"></script>
+</body>
+
+</html>

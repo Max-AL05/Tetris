@@ -8,28 +8,35 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Noto+Sans+KR:wght@100..900&family=Zain:ital,wght@0,200;0,300;0,400;0,700;0,800;0,900;1,300;1,400&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Noto+Sans+KR:wght@100..900&family=Zain:ital,wght@0,200;0,300;0,400;0,700;0,800;0,900;1,300;1,400&display=swap"
+        rel="stylesheet">
 </head>
 
 <body>
 
     <div id="menu-container">
         <img src="imagenes/logo.png" id="logo-menu">
-        
-        <input type="text" id="player-name-input" class="name-input" placeholder="Ingresa tu nombre" maxlength="12" autocomplete="off">
+
+        <input type="text" id="player-name-input" class="name-input" placeholder="Ingresa tu nombre" maxlength="12"
+            autocomplete="off">
         <br>
 
         <button id="start-button" class="btn-stars">
             Iniciar Partida
         </button>
+        <br>
+        <button id="scores-button" class="btn-stars">
+            Puntuaciones
+        </button>
     </div>
 
     <div id="game-area">
-        
+
         <div id="left-div">
             <img src="imagenes/logo.png" id="logo">
             <hr>
-            
+
             <div id="player-name-div">
                 <label id="player-name-display">Jugador: </label>
             </div>
@@ -47,10 +54,10 @@
                 <label id="lines"></label>
             </div>
         </div>
-        
+
         <div id="game-container">
             <canvas id="game-canvas"></canvas>
-            
+
             <div id="game-over-modal">
                 <h2>Game Over</h2>
                 <div class="modal-button-container">
@@ -58,7 +65,7 @@
                     <button id="menu-button" class="btn-stars">Menú</button>
                 </div>
             </div>
-            
+
             <div id="pause-modal">
                 <h2>Pausa</h2>
                 <div class="modal-button-container">
@@ -72,10 +79,10 @@
             <h3>Estadísticas</h3>
             <hr>
             <div id="stats-list">
-                </div>
+            </div>
         </div>
 
-    </div> 
+    </div>
 </body>
 
 <script src="script.js"></script>
