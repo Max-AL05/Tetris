@@ -2,7 +2,7 @@ window.onload = () => {
 
     const menuContainer = document.getElementById("menu-container");
     const startButton = document.getElementById("start-button");
-    const scoresButton = document.getElementById("scores-button"); // <--- NUEVO
+
     const playerNameInput = document.getElementById("player-name-input");
     const playerNameDisplay = document.getElementById("player-name-display");
 
@@ -27,6 +27,7 @@ window.onload = () => {
 
     const statsListContainer = document.getElementById("stats-list");
 
+    // AUDIO
     const bgMusic = new Audio('audio/soundtrack.mp3');
     bgMusic.loop = true;
     bgMusic.volume = 0.4;
@@ -143,15 +144,14 @@ window.onload = () => {
         NEXT_CANVAS_WIDTH = 4,
         NEXT_CANVAS_HEIGHT = 4,
 
-        // Definición base de piezas
         TETROMINOES_DEF = [
-            { x: [0, 0, 0, 0], y: [0, 1, 2, 3], colorIdx: 0 }, // I - Azul
-            { x: [0, 0, 1, 1], y: [0, 1, 0, 1], colorIdx: 2 }, // O - Amarillo
-            { x: [0, 1, 1, 1], y: [0, 0, 1, 2], colorIdx: 4 }, // L - Naranja
-            { x: [0, 0, 0, 1], y: [0, 1, 2, 0], colorIdx: 0 }, // J - Azul (repite)
-            { x: [0, 1, 1, 2], y: [0, 0, 1, 1], colorIdx: 1 }, // S - Verde
-            { x: [0, 1, 1, 2], y: [1, 1, 0, 1], colorIdx: 5 }, // T - Morado
-            { x: [0, 1, 1, 2], y: [1, 1, 0, 0], colorIdx: 3 }  // Z - Rojo
+            { x: [0, 0, 0, 0], y: [0, 1, 2, 3], colorIdx: 0 },
+            { x: [0, 0, 1, 1], y: [0, 1, 0, 1], colorIdx: 2 },
+            { x: [0, 1, 1, 1], y: [0, 0, 1, 2], colorIdx: 4 },
+            { x: [0, 0, 0, 1], y: [0, 1, 2, 0], colorIdx: 0 },
+            { x: [0, 1, 1, 2], y: [0, 0, 1, 1], colorIdx: 1 },
+            { x: [0, 1, 1, 2], y: [1, 1, 0, 1], colorIdx: 5 },
+            { x: [0, 1, 1, 2], y: [1, 1, 0, 0], colorIdx: 3 }
         ];
 
     let tetromino = null,
@@ -164,15 +164,15 @@ window.onload = () => {
         currentBaseDelay,
         pieceCounts = Array(7).fill(0);
 
+    // MENÚ: Solo input y botón Start
     let menuSelectionIndex = 1;
-    const menuItems = [playerNameInput, startButton, scoresButton]; // <--- AÑADIDO scoresButton
+    const menuItems = [playerNameInput, startButton];
 
     let gameOverSelectionIndex = 0;
     const gameOverItems = [restartButton, menuButton];
 
     let pauseSelectionIndex = 0;
     const pauseItems = [resumeButton, pauseMenuButton];
-
 
     function initStats() {
         statsListContainer.innerHTML = "";
@@ -245,10 +245,6 @@ window.onload = () => {
         setup();
     };
 
-    scoresButton.onclick = () => {
-        window.location.href = 'puntuaciones.html';
-    };
-
     restartButton.onclick = () => {
         gameOverMusic.pause();
         gameOverMusic.currentTime = 0;
@@ -318,7 +314,9 @@ window.onload = () => {
         bgMusic.currentTime = 0;
         gameOverMusic.currentTime = 0;
         gameOverMusic.play();
+
         saveScoreToBackend();
+
         gameOverModal.style.display = "block";
         gameOverSelectionIndex = 0;
         updateGameOverSelection();
@@ -411,13 +409,11 @@ window.onload = () => {
         const randIndex = Math.floor(Math.random() * TETROMINOES_DEF.length);
         const randColor = Math.floor(Math.random() * Tetromino.COLORS.length);
         const piece = TETROMINOES_DEF[randIndex];
-
         return new Tetromino([...piece.x], [...piece.y], randColor, randIndex);
     }
 
     function spawnNewTetromino() {
         tetromino = nextTetromino;
-
         updateStatCount(tetromino.typeId);
 
         nextTetromino = generateNewTetromino();
@@ -475,7 +471,7 @@ window.onload = () => {
                 startButton.click();
                 playerNameInput.blur();
             }
-            if (event.key !== "ArrowUp" && event.key !== "ArrowDown") {
+            if (event.key !== "ArrowUp" && event.key !== "ArrowDown" && event.key !== "w" && event.key !== "s") {
                 return;
             }
         }
@@ -499,7 +495,7 @@ window.onload = () => {
                     updatePauseSelection();
                     handled = true;
                     break;
-                case " ":
+                case " ": case "q": case "Q":
                     pauseItems[pauseSelectionIndex].click();
                     handled = true;
                     break;
@@ -510,7 +506,7 @@ window.onload = () => {
 
         if (menuContainer.style.display === "flex") {
             switch (event.key) {
-                case "ArrowUp":
+                case "ArrowUp": case "w": case "W":
                     menuSelectionIndex--;
                     if (menuSelectionIndex < 0) menuSelectionIndex = menuItems.length - 1;
                     updateMenuSelection();
